@@ -7667,17 +7667,48 @@ __webpack_require__(13);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
-    var _useState = (0, _react.useState)(false),
+    var _useState = (0, _react.useState)([_react2.default.createElement(
+        'div',
+        { onMouseDown: handleMouseDown,
+            className: 'dragger',
+            style: { top: 15, left: 15 },
+            id: 'dont-drag' },
+        _react2.default.createElement(
+            'p',
+            { className: 'action-label' },
+            'Email'
+        )
+    )]),
         _useState2 = _slicedToArray(_useState, 2),
-        clicked = _useState2[0],
-        setClicked = _useState2[1];
+        state = _useState2[0],
+        setState = _useState2[1];
+
+    var _useState3 = (0, _react.useState)(false),
+        _useState4 = _slicedToArray(_useState3, 2),
+        clicked = _useState4[0],
+        setClicked = _useState4[1];
 
     function handleMouseDown(e) {
         console.log('mousedown');
         setClicked(true);
-        var newDiv = document.createElement('div');
-        newDiv.setAttribute('style', 'background-color: white; height: 100px: width: 100px;');
-        e.target.append(newDiv);
+        if (e.target.id == 'dont-drag') {
+            var newState = state;
+            newState.push(_react2.default.createElement(
+                'div',
+                { style: { top: 400, left: 400 },
+                    className: 'dragger',
+                    onMouseOut: handleMouseOut,
+                    onMouseUp: handleMouseUp,
+                    onMouseMove: handleScroll,
+                    onMouseDown: handleMouseDown },
+                _react2.default.createElement(
+                    'p',
+                    null,
+                    'shits and gigs'
+                )
+            ));
+            setState(newState);
+        }
     }
 
     function handleMouseUp() {
@@ -7690,6 +7721,7 @@ function App() {
     }
 
     function handleScroll(e) {
+        console.log('clicked? ' + clicked);
         if (clicked) {
             e.target.setAttribute('style', 'top:' + (e.clientY - 40) + 'px; left:' + (e.clientX - 40) + 'px;');
         }
@@ -7698,20 +7730,7 @@ function App() {
     return _react2.default.createElement(
         'div',
         { className: 'outer-div' },
-        _react2.default.createElement(
-            'div',
-            { onMouseDown: handleMouseDown,
-                onMouseOut: handleMouseOut,
-                onMouseUp: handleMouseUp,
-                onMouseMove: handleScroll,
-                className: 'dragger',
-                style: { top: 15, left: 15 } },
-            _react2.default.createElement(
-                'p',
-                { className: 'action-label' },
-                'Email'
-            )
-        )
+        state
     );
 }
 
@@ -7749,7 +7768,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 200px;\n    height: 1000px;\n    background-color:  rgb(207, 152, 233);\n}\n\n.dragger{\n    width: 125px;\n    height: 150px;\n    position:absolute;\n    background-color: orange;\n}\n\n.action-label{\n    margin: 0 auto;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 2000px;\n    height: 1000px;\n    background-color:  rgb(207, 152, 233);\n}\n\n.dragger{\n    width: 125px;\n    height: 150px;\n    position:absolute;\n    background-color: orange;\n}\n\n.action-label{\n    margin: 0 auto;\n}", ""]);
 
 // exports
 
