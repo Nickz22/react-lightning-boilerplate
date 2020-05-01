@@ -3,14 +3,22 @@ import ReactDOM from 'react';
 import './App.css';
 
 export default function App(){
+
+    function getInitDiv(actionLabel, top){
+        return <div onMouseDown={handleMouseDown} 
+                    className="dragger action-label"
+                    style={{top: top, left: 15}}
+                    id="dont-drag">
+                    {actionLabel}
+                </div>
+    }
     const [state, setState] = useState(
         [
-            <div onMouseDown={handleMouseDown} 
-                className="dragger"
-                style={{top: 15, left: 15}}
-                id="dont-drag">
-            <p className='action-label'>Email</p>
-            </div>
+            getInitDiv('Native Email', 15),
+            getInitDiv('SFDC Email', 115),
+            getInitDiv('Call', 225),
+            getInitDiv('SMS', 325),
+            getInitDiv('Task', 425),
         ]
     );
     const [clicked, setClicked] = useState(false);
@@ -24,12 +32,12 @@ export default function App(){
             let newState = state;
             newState.push(
                 <div style={{top: 400, left: 400}} 
-                    className="dragger"
+                    className="dragger action-label"
                     onMouseOut={handleMouseOut}
                     onMouseUp={handleMouseUp} 
                     onMouseMove={handleScroll}
                     onMouseDown={handleMouseDown} >
-                        <p>shits and gigs</p>
+                        Action Instance
                 </div>
             );
         }

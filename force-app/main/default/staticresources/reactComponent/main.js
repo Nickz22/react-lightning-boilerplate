@@ -7667,18 +7667,19 @@ __webpack_require__(13);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
-    var _useState = (0, _react.useState)([_react2.default.createElement(
-        'div',
-        { onMouseDown: handleMouseDown,
-            className: 'dragger',
-            style: { top: 15, left: 15 },
-            id: 'dont-drag' },
-        _react2.default.createElement(
-            'p',
-            { className: 'action-label' },
-            'Email'
-        )
-    )]),
+
+    function getInitDiv(actionLabel, top) {
+        return _react2.default.createElement(
+            'div',
+            { onMouseDown: handleMouseDown,
+                className: 'dragger action-label',
+                style: { top: top, left: 15 },
+                id: 'dont-drag' },
+            actionLabel
+        );
+    }
+
+    var _useState = (0, _react.useState)([getInitDiv('Native Email', 15), getInitDiv('SFDC Email', 115), getInitDiv('Call', 225), getInitDiv('SMS', 325), getInitDiv('Task', 425)]),
         _useState2 = _slicedToArray(_useState, 2),
         state = _useState2[0],
         setState = _useState2[1];
@@ -7699,16 +7700,12 @@ function App() {
             newState.push(_react2.default.createElement(
                 'div',
                 { style: { top: 400, left: 400 },
-                    className: 'dragger',
+                    className: 'dragger action-label',
                     onMouseOut: handleMouseOut,
                     onMouseUp: handleMouseUp,
                     onMouseMove: handleScroll,
                     onMouseDown: handleMouseDown },
-                _react2.default.createElement(
-                    'p',
-                    null,
-                    'shits and gigs'
-                )
+                'Action Instance'
             ));
         }
     }
@@ -7772,7 +7769,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 2000px;\n    height: 1000px;\n    background-color:  rgb(207, 152, 233);\n}\n\n.dragger{\n    width: 125px;\n    height: 150px;\n    position:absolute;\n    background-color: orange;\n}\n\n.action-label{\n    margin: 0 auto;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n}\n\n.dragger{\n    width: 80px;\n    height: 80px;\n    position:absolute;\n    background-color: orange;\n    cursor: pointer;\n    border-radius: 10%;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
 
 // exports
 
