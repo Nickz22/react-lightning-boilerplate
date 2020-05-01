@@ -14,10 +14,12 @@ export default function App(){
         ]
     );
     const [clicked, setClicked] = useState(false);
+    let click = false;
 
     function handleMouseDown(e){
         console.log('mousedown');
         setClicked(true);
+        click = true;
         if(e.target.id == 'dont-drag'){
             let newState = state;
             newState.push(
@@ -30,22 +32,23 @@ export default function App(){
                         <p>shits and gigs</p>
                 </div>
             );
-            setState(newState);
         }
     }
 
     function handleMouseUp(){
         console.log('mouseup')
         setClicked(false);
+        click = false;
     }
 
     function handleMouseOut(){
         setClicked(false);
+        click = false;
     }
 
     function handleScroll(e){
-        console.log('clicked? '+clicked);
-        if(clicked){
+        console.log('clicked? '+click);
+        if(click){
             e.target.setAttribute('style','top:'+(e.clientY - 40)+'px; left:'+(e.clientX - 40)+'px;');
         }
     }

@@ -7688,9 +7688,12 @@ function App() {
         clicked = _useState4[0],
         setClicked = _useState4[1];
 
+    var click = false;
+
     function handleMouseDown(e) {
         console.log('mousedown');
         setClicked(true);
+        click = true;
         if (e.target.id == 'dont-drag') {
             var newState = state;
             newState.push(_react2.default.createElement(
@@ -7707,22 +7710,23 @@ function App() {
                     'shits and gigs'
                 )
             ));
-            setState(newState);
         }
     }
 
     function handleMouseUp() {
         console.log('mouseup');
         setClicked(false);
+        click = false;
     }
 
     function handleMouseOut() {
         setClicked(false);
+        click = false;
     }
 
     function handleScroll(e) {
-        console.log('clicked? ' + clicked);
-        if (clicked) {
+        console.log('clicked? ' + click);
+        if (click) {
             e.target.setAttribute('style', 'top:' + (e.clientY - 40) + 'px; left:' + (e.clientX - 40) + 'px;');
         }
     }
