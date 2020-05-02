@@ -4,8 +4,18 @@ import './App.css';
 
 export default function App(){
 
+    const [state, setState] = useState(
+        [
+            getInitDiv('Sequence Name', 50, '50%'),
+            getActionInsert(100)
+        ]
+    );
+    let newState = [];
+    const [clicked, setClicked] = useState(false);
+    let click = false;
+
     function getConnector(){
-        return 
+        return <div className="line-connector"></div>;
     }
 
     function getInitDiv(actionLabel, top, left){
@@ -20,8 +30,7 @@ export default function App(){
                 </div>
     }
 
-    function getActionInsert(){
-        let top = '20%';
+    function getActionInsert(top){
         let left = '60.75%';
         return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
         <div className="line-connector"></div> 
@@ -46,21 +55,43 @@ export default function App(){
         </div>
                 </div> 
     }
-
-    const [state, setState] = useState(
-        [
-            getInitDiv('Sequence Name', '10%', '50%'),
-            getConnector(), 
-            getActionInsert()
-        ]
-    );
-    const [clicked, setClicked] = useState(false);
-    let click = false;
     
     function addAction(e){
-        setClicked(true);
-        let newState = state;
-        newState.push(getInitDiv('Action Instance', '30%', '50%'));
+        if( newState.length == 0 ){
+            log('state length 1 ==> '+state.length);
+            for( let i = 0; i<state.length; i++ ){
+                if(i == state.length - 1){
+                    newState.push(getConnector());
+                    newState.push(getInitDiv('Action Instance', 50+(65*i), '50%'));
+                    newState.push(getActionInsert((i*65)+100));
+                }else{
+                    newState.push(state[i]);
+                }
+            }
+            log('newState length ==> '+newState.length);
+            setState(newState);
+            log('state length 2 ==> '+state.length);
+        }else{
+            log('new state length 1 ==> '+newState.length);
+            let newnewState = [];
+            for( let i = 0; i<newState.length; i++ ){
+                if(i == newState.length - 1){
+                    newnewState.push(getConnector());
+                    newnewState.push(getInitDiv('Action Instance', 50+(65*i), '50%'));
+                    newnewState.push(getActionInsert((i*65)+100));
+                }else{
+                    newnewState.push(newState[i]);
+                }
+            }
+            newState = newnewState;
+            log('newnewstate length ==> '+newnewState.length);
+            setState(newnewState);
+            log('new state length 2 ==> '+newState.length);
+        }
+        
+        // let n = React.createElement('div', {}, null);
+        // e.target.parentNode.insertBefore(getInitDiv('Action Instance', '30%', '50%'), null);
+        // setClicked(true);
     }
     function handleMouseDown(){
         setClicked(true);
@@ -83,6 +114,10 @@ export default function App(){
         if(click){
             e.target.setAttribute('style','top:'+(e.clientY - 40)+'px; left:'+(e.clientX - 40)+'px;');
         }
+    }
+
+    function log(message){
+        console.log(message);
     }
 
     return (

@@ -7667,9 +7667,22 @@ __webpack_require__(13);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
+    var _useState = (0, _react.useState)([getInitDiv('Sequence Name', 50, '50%'), getActionInsert(100)]),
+        _useState2 = _slicedToArray(_useState, 2),
+        state = _useState2[0],
+        setState = _useState2[1];
+
+    var newState = [];
+
+    var _useState3 = (0, _react.useState)(false),
+        _useState4 = _slicedToArray(_useState3, 2),
+        clicked = _useState4[0],
+        setClicked = _useState4[1];
+
+    var click = false;
 
     function getConnector() {
-        return;
+        return _react2.default.createElement('div', { className: 'line-connector' });
     }
 
     function getInitDiv(actionLabel, top, left) {
@@ -7690,8 +7703,7 @@ function App() {
         );
     }
 
-    function getActionInsert() {
-        var top = '20%';
+    function getActionInsert(top) {
         var left = '60.75%';
         return _react2.default.createElement(
             'div',
@@ -7723,22 +7735,42 @@ function App() {
         );
     }
 
-    var _useState = (0, _react.useState)([getInitDiv('Sequence Name', '10%', '50%'), getConnector(), getActionInsert()]),
-        _useState2 = _slicedToArray(_useState, 2),
-        state = _useState2[0],
-        setState = _useState2[1];
-
-    var _useState3 = (0, _react.useState)(false),
-        _useState4 = _slicedToArray(_useState3, 2),
-        clicked = _useState4[0],
-        setClicked = _useState4[1];
-
-    var click = false;
-
     function addAction(e) {
-        setClicked(true);
-        var newState = state;
-        newState.push(getInitDiv('Action Instance', '30%', '50%'));
+        if (newState.length == 0) {
+            log('state length 1 ==> ' + state.length);
+            for (var i = 0; i < state.length; i++) {
+                if (i == state.length - 1) {
+                    newState.push(getConnector());
+                    newState.push(getInitDiv('Action Instance', 50 + 65 * i, '50%'));
+                    newState.push(getActionInsert(i * 65 + 100));
+                } else {
+                    newState.push(state[i]);
+                }
+            }
+            log('newState length ==> ' + newState.length);
+            setState(newState);
+            log('state length 2 ==> ' + state.length);
+        } else {
+            log('new state length 1 ==> ' + newState.length);
+            var newnewState = [];
+            for (var _i = 0; _i < newState.length; _i++) {
+                if (_i == newState.length - 1) {
+                    newnewState.push(getConnector());
+                    newnewState.push(getInitDiv('Action Instance', 50 + 65 * _i, '50%'));
+                    newnewState.push(getActionInsert(_i * 65 + 100));
+                } else {
+                    newnewState.push(newState[_i]);
+                }
+            }
+            newState = newnewState;
+            log('newnewstate length ==> ' + newnewState.length);
+            setState(newnewState);
+            log('new state length 2 ==> ' + newState.length);
+        }
+
+        // let n = React.createElement('div', {}, null);
+        // e.target.parentNode.insertBefore(getInitDiv('Action Instance', '30%', '50%'), null);
+        // setClicked(true);
     }
     function handleMouseDown() {
         setClicked(true);
@@ -7761,6 +7793,10 @@ function App() {
         if (click) {
             e.target.setAttribute('style', 'top:' + (e.clientY - 40) + 'px; left:' + (e.clientX - 40) + 'px;');
         }
+    }
+
+    function log(message) {
+        console.log(message);
     }
 
     return _react2.default.createElement(
