@@ -7667,7 +7667,7 @@ __webpack_require__(13);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
-    var _useState = (0, _react.useState)([getInitDiv('Sequence Name', 50, '50%'), getActionInsert(100)]),
+    var _useState = (0, _react.useState)([getInitDiv('', 50, '50%'), getActionInsert(100), _react2.default.createElement('input', { type: 'text', id: 'foo', onKeyUp: setSequenceName })]),
         _useState2 = _slicedToArray(_useState, 2),
         state = _useState2[0],
         setState = _useState2[1];
@@ -7680,11 +7680,17 @@ function App() {
         setClicked = _useState4[1];
 
     var click = false;
+    var sequenceName = '';
 
     function getConnector(top, left) {
-        return _react2.default.createElement('div', { style: { top: top, left: left }, className: 'line-connector' });
+        // return <div style={{top: top, left: left}} className="line-connector"></div>;
+        return _react2.default.createElement('div', { className: 'line-connector' });
     }
-
+    function setSequenceName(e) {
+        sequenceName = e.target.value;
+        log('name ==> ' + sequenceName);
+        e.target.parentNode.firstChild.textContent = e.target.value;
+    }
     function getInitDiv(actionLabel, top, left) {
         return _react2.default.createElement(
             'div',
@@ -7693,7 +7699,6 @@ function App() {
                 onMouseUp: handleMouseUp,
                 onMouseOut: handleMouseOut,
                 onMouseMove: handleScroll,
-                style: { top: top, left: left },
                 id: 'dont-drag' },
             _react2.default.createElement(
                 'p',
@@ -7705,9 +7710,10 @@ function App() {
 
     function getActionInsert(top) {
         var left = '60.75%';
+        // return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
         return _react2.default.createElement(
             'div',
-            { style: { top: top, left: left, position: "absolute", display: 'block' } },
+            { id: 'add-action', style: { display: 'block' } },
             _react2.default.createElement('div', { className: 'new-action-connector' }),
             _react2.default.createElement(
                 'div',
@@ -7736,22 +7742,24 @@ function App() {
     }
 
     function addAction(e) {
+        var checkProp = false;
+        var input = document.getElementsByTagName('input');
+        log('input size ==> ' + input.length);
+        // input[0].remove();
         if (newState.length == 0) {
-            log('state length 1 ==> ' + state.length);
             for (var i = 0; i < state.length; i++) {
-                if (i == state.length - 1) {
+                if (state[i]["props"]["id"] == 'add-action') {
                     newState.push(getConnector(100, '63%'));
                     newState.push(getInitDiv('Action Instance', 50 + 65 * i, '50%'));
                     newState.push(getActionInsert(i * 65 + 100));
-                } else {
+                    newState.remove(newState.length - 1);
+                } else if (state[i]["props"]["id"] != 'foo') {
+                    // dont add text input to new state
                     newState.push(state[i]);
                 }
             }
-            log('newState length ==> ' + newState.length);
             setState(newState);
-            log('state length 2 ==> ' + state.length);
         } else {
-            log('new state length 1 ==> ' + newState.length);
             var newnewState = [];
             for (var _i = 0; _i < newState.length; _i++) {
                 if (_i == newState.length - 1) {
@@ -7763,9 +7771,7 @@ function App() {
                 }
             }
             newState = newnewState;
-            log('newnewstate length ==> ' + newnewState.length);
             setState(newnewState);
-            log('new state length 2 ==> ' + newState.length);
         }
     }
     function handleMouseDown() {
@@ -7836,7 +7842,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 0 auto;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    position:absolute;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 11px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: absolute;\n    z-index: 10;\n}\n\n.add-action{\n    position: relative;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 50% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    /* position:absolute; */\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
 
 // exports
 

@@ -6,25 +6,31 @@ export default function App(){
 
     const [state, setState] = useState(
         [
-            getInitDiv('Sequence Name', 50, '50%'),
-            getActionInsert(100)
+            getInitDiv('', 50, '50%'),
+            getActionInsert(100),
+            <input type="text" id="foo" onKeyUp={setSequenceName} />
         ]
     );
     let newState = [];
     const [clicked, setClicked] = useState(false);
     let click = false;
-
+    let sequenceName = '';
+    
     function getConnector(top, left){
-        return <div style={{top: top, left: left}} className="line-connector"></div>;
+        // return <div style={{top: top, left: left}} className="line-connector"></div>;
+        return <div className="line-connector"></div>;
     }
-
+    function setSequenceName(e){
+        sequenceName = e.target.value;
+        log('name ==> '+sequenceName);
+        e.target.parentNode.firstChild.textContent = e.target.value;
+    }
     function getInitDiv(actionLabel, top, left){
         return <div onMouseDown={handleMouseDown} 
                     className="dragger"
                     onMouseUp={handleMouseUp}
                     onMouseOut={handleMouseOut}
                     onMouseMove={handleScroll}
-                    style={{top: top, left: left}}
                     id="dont-drag">
                     <p className="action-label">{actionLabel}</p>
                 </div>
@@ -32,7 +38,8 @@ export default function App(){
 
     function getActionInsert(top){
         let left = '60.75%';
-        return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
+        // return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
+        return  <div id="add-action" style={{display: 'block'}}>
         <div className="new-action-connector"></div> 
         <div className="add-action" onClick={addAction}>
             <svg width="25" height="25">
@@ -57,22 +64,23 @@ export default function App(){
     }
     
     function addAction(e){
+        let checkProp = false;
+        let input = document.getElementsByTagName('input');
+        log('input size ==> '+input.length);
+        // input[0].remove();
         if( newState.length == 0 ){
-            log('state length 1 ==> '+state.length);
-            for( let i = 0; i<state.length; i++ ){
-                if(i == state.length - 1){
+            for( var i = 0; i<state.length; i++ ){
+                if(state[i]["props"]["id"]=='add-action'){
                     newState.push(getConnector(100, '63%'));
                     newState.push(getInitDiv('Action Instance', 50+(65*i), '50%'));
                     newState.push(getActionInsert((i*65)+100));
-                }else{
-                    newState.push(state[i]);
+                    newState.remove((newState.length -1));
+                }else if(state[i]["props"]["id"]!='foo'){ // dont add text input to new state
+                    newState.push(state[i]);           
                 }
             }
-            log('newState length ==> '+newState.length);
             setState(newState);
-            log('state length 2 ==> '+state.length);
         }else{
-            log('new state length 1 ==> '+newState.length);
             let newnewState = [];
             for( let i = 0; i<newState.length; i++ ){
                 if(i == newState.length - 1){
@@ -84,9 +92,7 @@ export default function App(){
                 }
             }
             newState = newnewState;
-            log('newnewstate length ==> '+newnewState.length);
             setState(newnewState);
-            log('new state length 2 ==> '+newState.length);
         }
     }
     function handleMouseDown(){
