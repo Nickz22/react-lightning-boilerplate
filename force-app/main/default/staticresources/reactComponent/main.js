@@ -7668,18 +7668,53 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function App() {
 
-    function getInitDiv(actionLabel, top) {
+    function getConnector() {
+        return _react2.default.createElement('div', { className: 'line-connector' });
+    }
+
+    function getInitDiv(actionLabel, top, left) {
         return _react2.default.createElement(
             'div',
             { onMouseDown: handleMouseDown,
-                className: 'dragger action-label',
-                style: { top: top, left: 15 },
+                className: 'dragger',
+                style: { top: top, left: left },
                 id: 'dont-drag' },
-            actionLabel
+            _react2.default.createElement(
+                'p',
+                { className: 'action-label' },
+                actionLabel
+            )
         );
     }
 
-    var _useState = (0, _react.useState)([getInitDiv('Native Email', 15), getInitDiv('SFDC Email', 115), getInitDiv('Call', 225), getInitDiv('SMS', 325), getInitDiv('Task', 425)]),
+    function getActionInsert() {
+        var top = '22.5%';
+        var left = '60.75%';
+        return _react2.default.createElement(
+            'div',
+            { style: { top: top, left: left, position: "absolute" } },
+            _react2.default.createElement(
+                'svg',
+                { width: '200', height: '100' },
+                _react2.default.createElement('circle', { cx: '12', cy: '12', r: '12',
+                    fill: 'rgb(131,197,82)' }),
+                _react2.default.createElement('rect', { width: '2',
+                    height: '12',
+                    style: { fill: "rgb(255,255,255)",
+                        x: 10,
+                        y: 5,
+                        strokeLinecap: "round" } }),
+                _react2.default.createElement('rect', { width: '12',
+                    height: '2',
+                    style: { fill: "rgb(255,255,255)",
+                        y: 10,
+                        x: 5,
+                        strokeLinecap: "round" } })
+            )
+        );
+    }
+
+    var _useState = (0, _react.useState)([getInitDiv('Sequence Name', '10%', '50%'), getConnector(), getActionInsert()]),
         _useState2 = _slicedToArray(_useState, 2),
         state = _useState2[0],
         setState = _useState2[1];
@@ -7692,7 +7727,6 @@ function App() {
     var click = false;
 
     function handleMouseDown(e) {
-        console.log('mousedown');
         setClicked(true);
         click = true;
         if (e.target.id == 'dont-drag') {
@@ -7769,7 +7803,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n}\n\n.dragger{\n    width: 80px;\n    height: 80px;\n    position:absolute;\n    background-color: orange;\n    cursor: pointer;\n    border-radius: 10%;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    position:absolute;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(7, 6, 6);\n    position: absolute;\n    top: 20%;\n    left: 62%;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
 
 // exports
 

@@ -5,12 +5,21 @@
 }
 
 .dragger{
-    width: 80px;
-    height: 80px;
+    width: 200px;
+    height: 50px;
     position:absolute;
-    background-color: orange;
+    background-color: rgb(253, 253, 253);
     cursor: pointer;
-    border-radius: 10%;
+    border-radius: 3%;
+}
+
+.line-connector{
+    height: 12px;
+    width: 1px;
+    background-color: rgb(7, 6, 6);
+    position: absolute;
+    top: 20%;
+    left: 62%;
 }
 
 .action-label{

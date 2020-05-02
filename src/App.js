@@ -4,28 +4,53 @@ import './App.css';
 
 export default function App(){
 
-    function getInitDiv(actionLabel, top){
+    function getConnector(){
+        return <div className="line-connector"></div>
+    }
+
+    function getInitDiv(actionLabel, top, left){
         return <div onMouseDown={handleMouseDown} 
-                    className="dragger action-label"
-                    style={{top: top, left: 15}}
+                    className="dragger"
+                    style={{top: top, left: left}}
                     id="dont-drag">
-                    {actionLabel}
+                    <p className="action-label">{actionLabel}</p>
                 </div>
     }
+
+    function getActionInsert(){
+        let top = '22.5%';
+        let left = '60.75%';
+        return  <div style={{top: top, left: left, position: "absolute"}}>
+                    <svg width="200" height="100">
+                        <circle cx="12" cy="12" r="12"
+                                fill="rgb(131,197,82)"/>
+                        <rect width="2" 
+                              height="12" 
+                              style={{fill: "rgb(255,255,255)",
+                              x: 10,
+                              y: 5,
+                              strokeLinecap:"round"}}/>
+                        <rect width="12" 
+                              height="2" 
+                              style={{fill: "rgb(255,255,255)",
+                              y: 10,
+                              x: 5,
+                              strokeLinecap:"round"}}/>
+                    </svg>
+                </div> 
+    }
+
     const [state, setState] = useState(
         [
-            getInitDiv('Native Email', 15),
-            getInitDiv('SFDC Email', 115),
-            getInitDiv('Call', 225),
-            getInitDiv('SMS', 325),
-            getInitDiv('Task', 425),
+            getInitDiv('Sequence Name', '10%', '50%'),
+            getConnector(), 
+            getActionInsert()
         ]
     );
     const [clicked, setClicked] = useState(false);
     let click = false;
 
     function handleMouseDown(e){
-        console.log('mousedown');
         setClicked(true);
         click = true;
         if(e.target.id == 'dont-drag'){
