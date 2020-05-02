@@ -7681,8 +7681,8 @@ function App() {
 
     var click = false;
 
-    function getConnector() {
-        return _react2.default.createElement('div', { className: 'line-connector' });
+    function getConnector(top, left) {
+        return _react2.default.createElement('div', { style: { top: top, left: left }, className: 'line-connector' });
     }
 
     function getInitDiv(actionLabel, top, left) {
@@ -7708,7 +7708,7 @@ function App() {
         return _react2.default.createElement(
             'div',
             { style: { top: top, left: left, position: "absolute", display: 'block' } },
-            _react2.default.createElement('div', { className: 'line-connector' }),
+            _react2.default.createElement('div', { className: 'new-action-connector' }),
             _react2.default.createElement(
                 'div',
                 { className: 'add-action', onClick: addAction },
@@ -7740,7 +7740,7 @@ function App() {
             log('state length 1 ==> ' + state.length);
             for (var i = 0; i < state.length; i++) {
                 if (i == state.length - 1) {
-                    newState.push(getConnector());
+                    newState.push(getConnector(100, '63%'));
                     newState.push(getInitDiv('Action Instance', 50 + 65 * i, '50%'));
                     newState.push(getActionInsert(i * 65 + 100));
                 } else {
@@ -7755,9 +7755,9 @@ function App() {
             var newnewState = [];
             for (var _i = 0; _i < newState.length; _i++) {
                 if (_i == newState.length - 1) {
-                    newnewState.push(getConnector());
-                    newnewState.push(getInitDiv('Action Instance', 50 + 65 * _i, '50%'));
-                    newnewState.push(getActionInsert(_i * 65 + 100));
+                    newnewState.push(getConnector(56 * _i, '63%'));
+                    newnewState.push(getInitDiv('Action Instance', 58 * _i, '50%'));
+                    newnewState.push(getActionInsert(_i * 60));
                 } else {
                     newnewState.push(newState[_i]);
                 }
@@ -7767,10 +7767,6 @@ function App() {
             setState(newnewState);
             log('new state length 2 ==> ' + newState.length);
         }
-
-        // let n = React.createElement('div', {}, null);
-        // e.target.parentNode.insertBefore(getInitDiv('Action Instance', '30%', '50%'), null);
-        // setClicked(true);
     }
     function handleMouseDown() {
         setClicked(true);
@@ -7840,7 +7836,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    position:absolute;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 11px;\n}\n\n.add-action{\n    position: relative;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 0 auto;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    position:absolute;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 11px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: absolute;\n    z-index: 10;\n}\n\n.add-action{\n    position: relative;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
 
 // exports
 

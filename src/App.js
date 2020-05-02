@@ -14,8 +14,8 @@ export default function App(){
     const [clicked, setClicked] = useState(false);
     let click = false;
 
-    function getConnector(){
-        return <div className="line-connector"></div>;
+    function getConnector(top, left){
+        return <div style={{top: top, left: left}} className="line-connector"></div>;
     }
 
     function getInitDiv(actionLabel, top, left){
@@ -33,7 +33,7 @@ export default function App(){
     function getActionInsert(top){
         let left = '60.75%';
         return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
-        <div className="line-connector"></div> 
+        <div className="new-action-connector"></div> 
         <div className="add-action" onClick={addAction}>
             <svg width="25" height="25">
                 <circle cx="12" cy="12" r="12"
@@ -61,7 +61,7 @@ export default function App(){
             log('state length 1 ==> '+state.length);
             for( let i = 0; i<state.length; i++ ){
                 if(i == state.length - 1){
-                    newState.push(getConnector());
+                    newState.push(getConnector(100, '63%'));
                     newState.push(getInitDiv('Action Instance', 50+(65*i), '50%'));
                     newState.push(getActionInsert((i*65)+100));
                 }else{
@@ -76,9 +76,9 @@ export default function App(){
             let newnewState = [];
             for( let i = 0; i<newState.length; i++ ){
                 if(i == newState.length - 1){
-                    newnewState.push(getConnector());
-                    newnewState.push(getInitDiv('Action Instance', 50+(65*i), '50%'));
-                    newnewState.push(getActionInsert((i*65)+100));
+                    newnewState.push(getConnector((56 * i), '63%'));
+                    newnewState.push(getInitDiv('Action Instance', (58*i), '50%'));
+                    newnewState.push(getActionInsert((i*60)));
                 }else{
                     newnewState.push(newState[i]);
                 }
@@ -88,10 +88,6 @@ export default function App(){
             setState(newnewState);
             log('new state length 2 ==> '+newState.length);
         }
-        
-        // let n = React.createElement('div', {}, null);
-        // e.target.parentNode.insertBefore(getInitDiv('Action Instance', '30%', '50%'), null);
-        // setClicked(true);
     }
     function handleMouseDown(){
         setClicked(true);
