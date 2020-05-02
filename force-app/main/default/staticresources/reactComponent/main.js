@@ -7669,7 +7669,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function App() {
 
     function getConnector() {
-        return _react2.default.createElement('div', { className: 'line-connector' });
+        return;
     }
 
     function getInitDiv(actionLabel, top, left) {
@@ -7677,6 +7677,9 @@ function App() {
             'div',
             { onMouseDown: handleMouseDown,
                 className: 'dragger',
+                onMouseUp: handleMouseUp,
+                onMouseOut: handleMouseOut,
+                onMouseMove: handleScroll,
                 style: { top: top, left: left },
                 id: 'dont-drag' },
             _react2.default.createElement(
@@ -7688,28 +7691,34 @@ function App() {
     }
 
     function getActionInsert() {
-        var top = '22.5%';
+        var top = '20%';
         var left = '60.75%';
         return _react2.default.createElement(
             'div',
-            { style: { top: top, left: left, position: "absolute" } },
+            { style: { top: top, left: left, position: "absolute", display: 'block' } },
+            _react2.default.createElement('div', { className: 'line-connector' }),
             _react2.default.createElement(
-                'svg',
-                { width: '200', height: '100' },
-                _react2.default.createElement('circle', { cx: '12', cy: '12', r: '12',
-                    fill: 'rgb(131,197,82)' }),
-                _react2.default.createElement('rect', { width: '2',
-                    height: '12',
-                    style: { fill: "rgb(255,255,255)",
-                        x: 10,
-                        y: 5,
-                        strokeLinecap: "round" } }),
-                _react2.default.createElement('rect', { width: '12',
-                    height: '2',
-                    style: { fill: "rgb(255,255,255)",
-                        y: 10,
-                        x: 5,
-                        strokeLinecap: "round" } })
+                'div',
+                { className: 'add-action', onClick: addAction },
+                _react2.default.createElement(
+                    'svg',
+                    { width: '25', height: '25' },
+                    _react2.default.createElement('circle', { cx: '12', cy: '12', r: '12',
+                        fill: 'rgb(131,197,82)' }),
+                    _react2.default.createElement('rect', { width: '2',
+                        height: '12',
+                        style: { fill: "rgb(255,255,255)",
+                            x: 10,
+                            y: 5,
+                            rx: 1, ry: 1,
+                            strokeLinecap: "round" } }),
+                    _react2.default.createElement('rect', { width: '12',
+                        height: '2',
+                        style: { fill: "rgb(255,255,255)",
+                            y: 10,
+                            x: 5, rx: 1, ry: 1,
+                            strokeLinecap: "round" } })
+                )
             )
         );
     }
@@ -7726,22 +7735,14 @@ function App() {
 
     var click = false;
 
-    function handleMouseDown(e) {
+    function addAction(e) {
+        setClicked(true);
+        var newState = state;
+        newState.push(getInitDiv('Action Instance', '30%', '50%'));
+    }
+    function handleMouseDown() {
         setClicked(true);
         click = true;
-        if (e.target.id == 'dont-drag') {
-            var newState = state;
-            newState.push(_react2.default.createElement(
-                'div',
-                { style: { top: 400, left: 400 },
-                    className: 'dragger action-label',
-                    onMouseOut: handleMouseOut,
-                    onMouseUp: handleMouseUp,
-                    onMouseMove: handleScroll,
-                    onMouseDown: handleMouseDown },
-                'Action Instance'
-            ));
-        }
     }
 
     function handleMouseUp() {
@@ -7803,7 +7804,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    position:absolute;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(7, 6, 6);\n    position: absolute;\n    top: 20%;\n    left: 62%;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    position:absolute;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 11px;\n}\n\n.add-action{\n    position: relative;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
 
 // exports
 

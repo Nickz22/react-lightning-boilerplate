@@ -5,12 +5,15 @@ import './App.css';
 export default function App(){
 
     function getConnector(){
-        return <div className="line-connector"></div>
+        return 
     }
 
     function getInitDiv(actionLabel, top, left){
         return <div onMouseDown={handleMouseDown} 
                     className="dragger"
+                    onMouseUp={handleMouseUp}
+                    onMouseOut={handleMouseOut}
+                    onMouseMove={handleScroll}
                     style={{top: top, left: left}}
                     id="dont-drag">
                     <p className="action-label">{actionLabel}</p>
@@ -18,25 +21,29 @@ export default function App(){
     }
 
     function getActionInsert(){
-        let top = '22.5%';
+        let top = '20%';
         let left = '60.75%';
-        return  <div style={{top: top, left: left, position: "absolute"}}>
-                    <svg width="200" height="100">
-                        <circle cx="12" cy="12" r="12"
-                                fill="rgb(131,197,82)"/>
-                        <rect width="2" 
-                              height="12" 
-                              style={{fill: "rgb(255,255,255)",
-                              x: 10,
-                              y: 5,
-                              strokeLinecap:"round"}}/>
-                        <rect width="12" 
-                              height="2" 
-                              style={{fill: "rgb(255,255,255)",
-                              y: 10,
-                              x: 5,
-                              strokeLinecap:"round"}}/>
-                    </svg>
+        return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
+        <div className="line-connector"></div> 
+        <div className="add-action" onClick={addAction}>
+            <svg width="25" height="25">
+                <circle cx="12" cy="12" r="12"
+                        fill="rgb(131,197,82)"/>
+                <rect width="2" 
+                        height="12" 
+                        style={{fill: "rgb(255,255,255)",
+                        x: 10,
+                        y: 5,
+                        rx:1, ry:1,
+                        strokeLinecap:"round"}}/>
+                <rect width="12" 
+                        height="2"        
+                    style={{fill: "rgb(255,255,255)",
+                        y: 10,
+                        x: 5,rx:1, ry:1,
+                        strokeLinecap:"round"}}/>
+            </svg>
+        </div>
                 </div> 
     }
 
@@ -49,23 +56,15 @@ export default function App(){
     );
     const [clicked, setClicked] = useState(false);
     let click = false;
-
-    function handleMouseDown(e){
+    
+    function addAction(e){
+        setClicked(true);
+        let newState = state;
+        newState.push(getInitDiv('Action Instance', '30%', '50%'));
+    }
+    function handleMouseDown(){
         setClicked(true);
         click = true;
-        if(e.target.id == 'dont-drag'){
-            let newState = state;
-            newState.push(
-                <div style={{top: 400, left: 400}} 
-                    className="dragger action-label"
-                    onMouseOut={handleMouseOut}
-                    onMouseUp={handleMouseUp} 
-                    onMouseMove={handleScroll}
-                    onMouseDown={handleMouseDown} >
-                        Action Instance
-                </div>
-            );
-        }
     }
 
     function handleMouseUp(){
@@ -74,7 +73,7 @@ export default function App(){
         click = false;
     }
 
-    function handleMouseOut(){
+        function handleMouseOut(){
         setClicked(false);
         click = false;
     }
