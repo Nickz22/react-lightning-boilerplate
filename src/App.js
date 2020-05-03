@@ -1,9 +1,11 @@
 import React, { Component, useState } from 'react';
-import ReactDOM from 'react';
+
 import './App.css';
 
 export default function App(){
-
+    /**
+     * @description - initial div and input for Sequence Name
+     */
     const [state, setState] = useState(
         [
             getInitDiv('', 50, '50%'),
@@ -11,18 +13,28 @@ export default function App(){
             <input type="text" id="foo" onKeyUp={setSequenceName} />
         ]
     );
+    /**
+     * @description - using newState for state management, {state} will always be set with newState value
+     *                  I couldn't figure out how to directly use {state} for this.
+     */
     let newState = [];
-    const [clicked, setClicked] = useState(false);
+    /**
+     * @description - if {clicked} is true, target will move vertically
+     */
+    // const [clicked, setClicked] = useState(false);
+    /**
+     * @description - if true, target will drag vertically
+     */
     let click = false;
+
+    let modal = false;
     let sequenceName = '';
     
     function getConnector(top, left){
-        // return <div style={{top: top, left: left}} className="line-connector"></div>;
         return <div className="line-connector"></div>;
     }
     function setSequenceName(e){
         sequenceName = e.target.value;
-        log('name ==> '+sequenceName);
         e.target.parentNode.firstChild.textContent = e.target.value;
     }
     function getInitDiv(actionLabel, top, left){
@@ -37,8 +49,6 @@ export default function App(){
     }
 
     function getActionInsert(top){
-        let left = '60.75%';
-        // return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
         return  <div id="add-action" style={{display: 'block'}}>
         <div className="new-action-connector"></div> 
         <div className="add-action" onClick={addAction}>
@@ -65,9 +75,6 @@ export default function App(){
     
     function addAction(e){
         let checkProp = false;
-        let input = document.getElementsByTagName('input');
-        log('input size ==> '+input.length);
-        // input[0].remove();
         if( newState.length == 0 ){
             for( var i = 0; i<state.length; i++ ){
                 if(state[i]["props"]["id"]=='add-action'){
@@ -79,11 +86,44 @@ export default function App(){
                     newState.push(state[i]);           
                 }
             }
+            if( !modal ){
+                newState.push(<div style={{
+                    position: "fixed", 
+                    top: "15%", 
+                    left:"60%",
+                    backgroundColor: "white", 
+                    height: 600, 
+                    width: 300,
+                    borderRadius: "5%",
+                    boxShadow: "0 0 2.5px rgb(206, 206, 206)",
+                    padding: 15
+                }}>
+                    <p>Add an Action</p>
+                    <div className="action-types">
+                        <p className="type-header" style={{
+                            marginTop: "-5px"
+                        }}>Type Action</p>
+                        <div className="types">
+                            <p className="type">Call</p>
+                            <p className="type">Email</p>
+                            <p className="type">SMS</p>
+                            <p className="type">Task</p>
+                        </div>
+                        <form>
+                            <div><label for="action">Select Action</label></div>
+                            <div><input type="text" id="action"/></div>
+                            <div><label for="time">Execution Time</label></div>
+                            <div><input type="text" id="time"/></div>
+                        </form>
+                    </div>
+                </div> );
+                modal = true;
+            }
             setState(newState);
         }else{
             let newnewState = [];
             for( let i = 0; i<newState.length; i++ ){
-                if(i == newState.length - 1){
+                if(newState[i]["props"]["id"]=='add-action'){
                     newnewState.push(getConnector((56 * i), '63%'));
                     newnewState.push(getInitDiv('Action Instance', (58*i), '50%'));
                     newnewState.push(getActionInsert((i*60)));
@@ -96,18 +136,17 @@ export default function App(){
         }
     }
     function handleMouseDown(){
-        setClicked(true);
+        // setClicked(true);
         click = true;
     }
 
     function handleMouseUp(){
-        console.log('mouseup')
-        setClicked(false);
+        // setClicked(false);
         click = false;
     }
 
         function handleMouseOut(){
-        setClicked(false);
+        // setClicked(false);
         click = false;
     }
 

@@ -7667,28 +7667,37 @@ __webpack_require__(13);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
+    /**
+     * @description - initial div and input for Sequence Name
+     */
     var _useState = (0, _react.useState)([getInitDiv('', 50, '50%'), getActionInsert(100), _react2.default.createElement('input', { type: 'text', id: 'foo', onKeyUp: setSequenceName })]),
         _useState2 = _slicedToArray(_useState, 2),
         state = _useState2[0],
         setState = _useState2[1];
+    /**
+     * @description - using newState for state management, {state} will always be set with newState value
+     *                  I couldn't figure out how to directly use {state} for this.
+     */
+
 
     var newState = [];
-
-    var _useState3 = (0, _react.useState)(false),
-        _useState4 = _slicedToArray(_useState3, 2),
-        clicked = _useState4[0],
-        setClicked = _useState4[1];
-
+    /**
+     * @description - if {clicked} is true, target will move vertically
+     */
+    // const [clicked, setClicked] = useState(false);
+    /**
+     * @description - if true, target will drag vertically
+     */
     var click = false;
+
+    var modal = false;
     var sequenceName = '';
 
     function getConnector(top, left) {
-        // return <div style={{top: top, left: left}} className="line-connector"></div>;
         return _react2.default.createElement('div', { className: 'line-connector' });
     }
     function setSequenceName(e) {
         sequenceName = e.target.value;
-        log('name ==> ' + sequenceName);
         e.target.parentNode.firstChild.textContent = e.target.value;
     }
     function getInitDiv(actionLabel, top, left) {
@@ -7709,8 +7718,6 @@ function App() {
     }
 
     function getActionInsert(top) {
-        var left = '60.75%';
-        // return  <div style={{top: top, left: left, position: "absolute", display: 'block'}}>
         return _react2.default.createElement(
             'div',
             { id: 'add-action', style: { display: 'block' } },
@@ -7743,9 +7750,6 @@ function App() {
 
     function addAction(e) {
         var checkProp = false;
-        var input = document.getElementsByTagName('input');
-        log('input size ==> ' + input.length);
-        // input[0].remove();
         if (newState.length == 0) {
             for (var i = 0; i < state.length; i++) {
                 if (state[i]["props"]["id"] == 'add-action') {
@@ -7758,11 +7762,100 @@ function App() {
                     newState.push(state[i]);
                 }
             }
+            if (!modal) {
+                newState.push(_react2.default.createElement(
+                    'div',
+                    { style: {
+                            position: "fixed",
+                            top: "15%",
+                            left: "60%",
+                            backgroundColor: "white",
+                            height: 600,
+                            width: 300,
+                            borderRadius: "5%",
+                            boxShadow: "0 0 2.5px rgb(206, 206, 206)",
+                            padding: 15
+                        } },
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        'Add an Action'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'action-types' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'type-header', style: {
+                                    marginTop: "-5px"
+                                } },
+                            'Type Action'
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'types' },
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'type' },
+                                'Call'
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'type' },
+                                'Email'
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'type' },
+                                'SMS'
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'type' },
+                                'Task'
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'form',
+                            null,
+                            _react2.default.createElement(
+                                'div',
+                                null,
+                                _react2.default.createElement(
+                                    'label',
+                                    { 'for': 'action' },
+                                    'Select Action'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                null,
+                                _react2.default.createElement('input', { type: 'text', id: 'action' })
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                null,
+                                _react2.default.createElement(
+                                    'label',
+                                    { 'for': 'time' },
+                                    'Execution Time'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                null,
+                                _react2.default.createElement('input', { type: 'text', id: 'time' })
+                            )
+                        )
+                    )
+                ));
+                modal = true;
+            }
             setState(newState);
         } else {
             var newnewState = [];
             for (var _i = 0; _i < newState.length; _i++) {
-                if (_i == newState.length - 1) {
+                if (newState[_i]["props"]["id"] == 'add-action') {
                     newnewState.push(getConnector(56 * _i, '63%'));
                     newnewState.push(getInitDiv('Action Instance', 58 * _i, '50%'));
                     newnewState.push(getActionInsert(_i * 60));
@@ -7775,18 +7868,17 @@ function App() {
         }
     }
     function handleMouseDown() {
-        setClicked(true);
+        // setClicked(true);
         click = true;
     }
 
     function handleMouseUp() {
-        console.log('mouseup');
-        setClicked(false);
+        // setClicked(false);
         click = false;
     }
 
     function handleMouseOut() {
-        setClicked(false);
+        // setClicked(false);
         click = false;
     }
 
@@ -7842,7 +7934,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 1000px;\n    height: 1000px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 50% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    /* position:absolute; */\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 30% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    /* position:absolute; */\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.modal-header{\n    /* font-family: Logical;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 18px; */\n}\n\n.action-types{\n    display: block;\n}\n\n.type-header{\n    /* font-family: logical;\n    font-size: small; */\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    padding: 2px;\n    font-size: 9px;\n    margin-top: -9px;\n}\n\n.type{\n    font-family: logical;\n    margin: 5px;\n}\n\nlabel{\n    font-size: 4px;\n}\n\n.modal{\n    /* position: fixed;\n    top: 100px;\n    left: 500px;\n    z-index: 10; */\n    background-color: red;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
 
 // exports
 

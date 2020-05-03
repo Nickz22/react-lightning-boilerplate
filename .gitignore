@@ -65,3 +65,6 @@ build
 
 # Local DX Settings
 .sfdx
+
+# ignore rdna ui repo
+ui

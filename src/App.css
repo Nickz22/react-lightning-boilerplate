@@ -1,9 +1,9 @@
 .outer-div{
-    width: 1000px;
-    height: 1000px;
+    width: 800px;
+    height: 500px;
     background-color:  rgb(235, 235, 235);
     display:block;
-    padding: 10% 50% ;
+    padding: 10% 30% ;
 }
 
 .dragger{
@@ -30,6 +30,47 @@
     z-index: 10;
     position: relative;
     left: 100px;
+}
+
+.modal-header{
+    /* font-family: Logical;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px; */
+}
+
+.action-types{
+    display: block;
+}
+
+.type-header{
+    /* font-family: logical;
+    font-size: small; */
+    font-size: 7px;
+}
+
+.types{
+    display: flex;
+    padding: 2px;
+    font-size: 9px;
+    margin-top: -9px;
+}
+
+.type{
+    font-family: logical;
+    margin: 5px;
+}
+
+label{
+    font-size: 4px;
+}
+
+.modal{
+    /* position: fixed;
+    top: 100px;
+    left: 500px;
+    z-index: 10; */
+    background-color: red;
 }
 
 .add-action{
