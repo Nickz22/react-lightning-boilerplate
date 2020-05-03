@@ -89,11 +89,11 @@ export default function App(){
             if( !modal ){
                 newState.push(<div style={{
                     position: "fixed", 
-                    top: "15%", 
-                    left:"60%",
+                    top: "10%", 
+                    left:"50%",
                     backgroundColor: "white", 
-                    height: 600, 
-                    width: 300,
+                    height: 400, 
+                    width: 275,
                     borderRadius: "5%",
                     boxShadow: "0 0 2.5px rgb(206, 206, 206)",
                     padding: 15
@@ -110,10 +110,32 @@ export default function App(){
                             <p className="type">Task</p>
                         </div>
                         <form>
-                            <div><label for="action">Select Action</label></div>
-                            <div><input type="text" id="action"/></div>
-                            <div><label for="time">Execution Time</label></div>
-                            <div><input type="text" id="time"/></div>
+                            <div>
+                                <label>Select Action <br />
+                                    <input type="text" name="action"/>
+                                </label>
+                            </div>
+                            <div>
+                                <label>Execution Time <br />
+                                    <input type="text" name="time"/>
+                                </label>
+                            </div>
+                            <div>
+                                <label>Field Updates <br />
+                                    <input type="radio"/>  No Field Updates<br/>
+                                    <input type="radio"/>  Field Updates Required<br/>
+                                </label>
+                            </div>
+                            <div>
+                                <label>Criteria <br />
+                                    <input type="radio"/>  No Additional Criteria<br/>
+                                    <input type="radio"/>  Conditions are met<br/>
+                                </label>
+                            </div>
+                            <div style={{display: "flex", height: "40px", width: "70px"}}>
+                                <button type="reset" style={{border: "none", borderRadius: "2%"}}><p style={{color: "grey", fontSize: "10px"}}>Cancel</p></button>
+                                <button type="submit" style={{backgroundColor: "lightgreen",borderRadius: "2%"}}><p style={{fontSize: "10px"}}>Save</p></button>
+                            </div>
                         </form>
                     </div>
                 </div> );

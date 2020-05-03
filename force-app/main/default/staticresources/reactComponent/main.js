@@ -7767,11 +7767,11 @@ function App() {
                     'div',
                     { style: {
                             position: "fixed",
-                            top: "15%",
-                            left: "60%",
+                            top: "10%",
+                            left: "50%",
                             backgroundColor: "white",
-                            height: 600,
-                            width: 300,
+                            height: 400,
+                            width: 275,
                             borderRadius: "5%",
                             boxShadow: "0 0 2.5px rgb(206, 206, 206)",
                             padding: 15
@@ -7823,28 +7823,76 @@ function App() {
                                 null,
                                 _react2.default.createElement(
                                     'label',
-                                    { 'for': 'action' },
-                                    'Select Action'
+                                    null,
+                                    'Select Action ',
+                                    _react2.default.createElement('br', null),
+                                    _react2.default.createElement('input', { type: 'text', name: 'action' })
                                 )
-                            ),
-                            _react2.default.createElement(
-                                'div',
-                                null,
-                                _react2.default.createElement('input', { type: 'text', id: 'action' })
                             ),
                             _react2.default.createElement(
                                 'div',
                                 null,
                                 _react2.default.createElement(
                                     'label',
-                                    { 'for': 'time' },
-                                    'Execution Time'
+                                    null,
+                                    'Execution Time ',
+                                    _react2.default.createElement('br', null),
+                                    _react2.default.createElement('input', { type: 'text', name: 'time' })
                                 )
                             ),
                             _react2.default.createElement(
                                 'div',
                                 null,
-                                _react2.default.createElement('input', { type: 'text', id: 'time' })
+                                _react2.default.createElement(
+                                    'label',
+                                    null,
+                                    'Field Updates ',
+                                    _react2.default.createElement('br', null),
+                                    _react2.default.createElement('input', { type: 'radio' }),
+                                    '  No Field Updates',
+                                    _react2.default.createElement('br', null),
+                                    _react2.default.createElement('input', { type: 'radio' }),
+                                    '  Field Updates Required',
+                                    _react2.default.createElement('br', null)
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                null,
+                                _react2.default.createElement(
+                                    'label',
+                                    null,
+                                    'Criteria ',
+                                    _react2.default.createElement('br', null),
+                                    _react2.default.createElement('input', { type: 'radio' }),
+                                    '  No Additional Criteria',
+                                    _react2.default.createElement('br', null),
+                                    _react2.default.createElement('input', { type: 'radio' }),
+                                    '  Conditions are met',
+                                    _react2.default.createElement('br', null)
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { style: { display: "flex", height: "40px", width: "70px" } },
+                                _react2.default.createElement(
+                                    'button',
+                                    { type: 'reset', style: { border: "none", borderRadius: "2%" } },
+                                    _react2.default.createElement(
+                                        'p',
+                                        { style: { color: "grey", fontSize: "10px" } },
+                                        'Cancel'
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'button',
+                                    { type: 'submit', style: { backgroundColor: "lightgreen", borderRadius: "2%" } },
+                                    _react2.default.createElement(
+                                        'p',
+                                        { style: { fontSize: "10px" } },
+                                        'Save'
+                                    )
+                                )
                             )
                         )
                     )
@@ -7934,7 +7982,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 30% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    /* position:absolute; */\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.modal-header{\n    /* font-family: Logical;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 18px; */\n}\n\n.action-types{\n    display: block;\n}\n\n.type-header{\n    /* font-family: logical;\n    font-size: small; */\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    padding: 2px;\n    font-size: 9px;\n    margin-top: -9px;\n}\n\n.type{\n    font-family: logical;\n    margin: 5px;\n}\n\nlabel{\n    font-size: 4px;\n}\n\n.modal{\n    /* position: fixed;\n    top: 100px;\n    left: 500px;\n    z-index: 10; */\n    background-color: red;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    /* position:absolute; */\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.modal-header{\n    /* font-family: Logical;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 18px; */\n}\n\n.action-types{\n    display: block;\n}\n\nform{\n    margin: 10px;\n}\nbutton{\n    margin-top: 25px;\n}\n.type-header{\n    /* font-family: logical;\n    font-size: small; */\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    padding: 2px;\n    font-size: 9px;\n    margin-top: -9px;\n}\n\n.type{\n    font-family: logical;\n    margin: 18px;\n}\n\nlabel{\n    font-size: 9px;\n}\n\n.modal{\n    /* position: fixed;\n    top: 100px;\n    left: 500px;\n    z-index: 10; */\n    background-color: red;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
 
 // exports
 
