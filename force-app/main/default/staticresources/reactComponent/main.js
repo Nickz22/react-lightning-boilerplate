@@ -7684,22 +7684,29 @@ function App() {
     /**
      * @description - if {clicked} is true, target will move vertically
      */
-    // const [clicked, setClicked] = useState(false);
     /**
      * @description - if true, target will drag vertically
      */
     var click = false;
-
+    /**
+     * @description - flag to indicate that the Add Action modal is open
+     */
     var modal = false;
     var sequenceName = '';
-
+    var selectedActionType = '';
+    /**
+     * @description - line connector between two elements
+     */
     function getConnector(top, left) {
         return _react2.default.createElement('div', { className: 'line-connector' });
     }
     function setSequenceName(e) {
         sequenceName = e.target.value;
-        e.target.parentNode.firstChild.textContent = e.target.value;
+        e.target.parentNode.firstChild.textContent = sequenceName;
     }
+    /**
+     * @description - returns a 'dragger' div used for actions and sequence name
+     */
     function getInitDiv(actionLabel, top, left) {
         return _react2.default.createElement(
             'div',
@@ -7716,7 +7723,9 @@ function App() {
             )
         );
     }
-
+    /**
+     * @description - returns connector and "+" sign
+     */
     function getActionInsert(top) {
         return _react2.default.createElement(
             'div',
@@ -7747,16 +7756,17 @@ function App() {
             )
         );
     }
-
-    function addAction(e) {
-        var checkProp = false;
+    /**
+     * @description - adds div for new action in second to last index of state array
+     */
+    function addAction() {
         if (newState.length == 0) {
             for (var i = 0; i < state.length; i++) {
                 if (state[i]["props"]["id"] == 'add-action') {
                     newState.push(getConnector(100, '63%'));
                     newState.push(getInitDiv('Action Instance', 50 + 65 * i, '50%'));
                     newState.push(getActionInsert(i * 65 + 100));
-                    newState.remove(newState.length - 1);
+                    // newState.remove((newState.length -1));
                 } else if (state[i]["props"]["id"] != 'foo') {
                     // dont add text input to new state
                     newState.push(state[i]);
@@ -7772,9 +7782,10 @@ function App() {
                             backgroundColor: "white",
                             height: 400,
                             width: 275,
-                            borderRadius: "5%",
+                            borderRadius: "2%",
                             boxShadow: "0 0 2.5px rgb(206, 206, 206)",
-                            padding: 15
+                            padding: 15,
+                            overflow: "scroll"
                         } },
                     _react2.default.createElement(
                         'p',
@@ -7796,22 +7807,22 @@ function App() {
                             { className: 'types' },
                             _react2.default.createElement(
                                 'p',
-                                { className: 'type' },
+                                { className: 'type', onClick: selectActionType },
                                 'Call'
                             ),
                             _react2.default.createElement(
                                 'p',
-                                { className: 'type' },
+                                { className: 'type', onClick: selectActionType },
                                 'Email'
                             ),
                             _react2.default.createElement(
                                 'p',
-                                { className: 'type' },
+                                { className: 'type', onClick: selectActionType },
                                 'SMS'
                             ),
                             _react2.default.createElement(
                                 'p',
-                                { className: 'type' },
+                                { className: 'type', onClick: selectActionType },
                                 'Task'
                             )
                         ),
@@ -7826,7 +7837,8 @@ function App() {
                                     null,
                                     'Select Action ',
                                     _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'text', name: 'action' })
+                                    _react2.default.createElement('input', { type: 'text', onFocus: getActions, name: 'action', id: 'action_input' }),
+                                    _react2.default.createElement('div', { id: 'action-results', className: 'action-result-panel' })
                                 )
                             ),
                             _react2.default.createElement(
@@ -7915,23 +7927,61 @@ function App() {
             setState(newnewState);
         }
     }
+
+    function handleActionClick(e) {
+        log('running');
+        log(e.target.textContent);
+        var i = document.getElementById('action_input');
+        i.value = e.target.textContent;
+
+        var resultsToDisperse = document.querySelectorAll(".action-name");
+        log('dispersing ' + resultsToDisperse.length);
+        for (var x = 0; x < resultsToDisperse.length; x++) {
+            resultsToDisperse[x].remove();
+        }
+    }
+
+    function getActions(e) {
+        if (e.target.value.length > 2) {
+            log('running');
+            fetchActions(e.target.value);
+        }
+    }
+
+    function fetchActions(actionName) {
+        Visualforce.remoting.Manager.invokeAction('ReactController.getActions', actionName, function (results, event) {
+            if (event.status) {
+                console.log('callback');
+                var viewResults = document.getElementById("action-results");
+                for (var i = 0; i < results.length; i++) {
+                    var p = document.createElement("P");
+                    var textNode = document.createTextNode('Name: ' + results[i]["Name"]);
+                    p.appendChild(textNode);
+                    p.className = 'action-name';
+                    p.addEventListener("click", handleActionClick);
+                    viewResults.appendChild(p);
+                }
+            }
+        });
+    }
+
+    function selectActionType(e) {
+        selectedActionType = e.target.textContent;
+    }
+
     function handleMouseDown() {
-        // setClicked(true);
         click = true;
     }
 
     function handleMouseUp() {
-        // setClicked(false);
         click = false;
     }
 
     function handleMouseOut() {
-        // setClicked(false);
         click = false;
     }
 
     function handleScroll(e) {
-        console.log('clicked? ' + click);
         if (click) {
             e.target.setAttribute('style', 'top:' + (e.clientY - 40) + 'px; left:' + (e.clientX - 40) + 'px;');
         }
@@ -7982,7 +8032,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    /* position:absolute; */\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.modal-header{\n    /* font-family: Logical;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 18px; */\n}\n\n.action-types{\n    display: block;\n}\n\nform{\n    margin: 10px;\n}\nbutton{\n    margin-top: 25px;\n}\n.type-header{\n    /* font-family: logical;\n    font-size: small; */\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    padding: 2px;\n    font-size: 9px;\n    margin-top: -9px;\n}\n\n.type{\n    font-family: logical;\n    margin: 18px;\n}\n\nlabel{\n    font-size: 9px;\n}\n\n.modal{\n    /* position: fixed;\n    top: 100px;\n    left: 500px;\n    z-index: 10; */\n    background-color: red;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.modal-header{\n    /* font-family: Logical;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 18px; */\n}\n\n.action-types{\n    display: block;\n}\n\nform{\n    margin: 10px;\n}\nform > div{\n    margin-top: 10px;\n}\nbutton{\n    margin-top: 25px;\n}\n.type-header{\n    font-family: logical;\n    font-style: normal;\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    padding: 2px;\n    font-size: 9px;\n}\n\n.type{\n    font-family: logical;\n    margin-left: 30px;\n    display: flex;\n}\n\n.type:hover{\n    cursor:pointer;\n    color: greenyellow;\n}\n\nlabel{\n    font-size: 9px;\n}\n\n\n.modal{\n    background-color: red;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-result-panel{\n    background-color: beige;\n    max-height: 200px;\n    overflow:scroll;\n    cursor:pointer;   \n}\n\n.action-label{\n    padding: 15px 15px;\n}\n\n.action-name:hover{\n    border-bottom: 1px solid black;\n}", ""]);
 
 // exports
 

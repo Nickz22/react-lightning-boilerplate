@@ -9,7 +9,6 @@
 .dragger{
     width: 200px;
     height: 50px;
-    /* position:absolute; */
     background-color: rgb(253, 253, 253);
     cursor: pointer;
     border-radius: 3%;
@@ -46,12 +45,15 @@
 form{
     margin: 10px;
 }
+form > div{
+    margin-top: 10px;
+}
 button{
     margin-top: 25px;
 }
 .type-header{
-    /* font-family: logical;
-    font-size: small; */
+    font-family: logical;
+    font-style: normal;
     font-size: 7px;
 }
 
@@ -59,23 +61,25 @@ button{
     display: flex;
     padding: 2px;
     font-size: 9px;
-    margin-top: -9px;
 }
 
 .type{
     font-family: logical;
-    margin: 18px;
+    margin-left: 30px;
+    display: flex;
+}
+
+.type:hover{
+    cursor:pointer;
+    color: greenyellow;
 }
 
 label{
     font-size: 9px;
 }
 
+
 .modal{
-    /* position: fixed;
-    top: 100px;
-    left: 500px;
-    z-index: 10; */
     background-color: red;
 }
 
@@ -84,6 +88,17 @@ label{
     cursor:pointer;
 }
 
+.action-result-panel{
+    background-color: beige;
+    max-height: 200px;
+    overflow:scroll;
+    cursor:pointer;   
+}
+
 .action-label{
     padding: 15px 15px;
+}
+
+.action-name:hover{
+    border-bottom: 1px solid black;
 }

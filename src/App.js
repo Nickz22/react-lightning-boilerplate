@@ -1,5 +1,4 @@
 import React, { Component, useState } from 'react';
-
 import './App.css';
 
 export default function App(){
@@ -21,22 +20,29 @@ export default function App(){
     /**
      * @description - if {clicked} is true, target will move vertically
      */
-    // const [clicked, setClicked] = useState(false);
     /**
      * @description - if true, target will drag vertically
      */
     let click = false;
-
+    /**
+     * @description - flag to indicate that the Add Action modal is open
+     */
     let modal = false;
     let sequenceName = '';
-    
+    let selectedActionType = '';
+    /**
+     * @description - line connector between two elements
+     */
     function getConnector(top, left){
         return <div className="line-connector"></div>;
     }
     function setSequenceName(e){
         sequenceName = e.target.value;
-        e.target.parentNode.firstChild.textContent = e.target.value;
+        e.target.parentNode.firstChild.textContent = sequenceName;
     }
+    /**
+     * @description - returns a 'dragger' div used for actions and sequence name
+     */
     function getInitDiv(actionLabel, top, left){
         return <div onMouseDown={handleMouseDown} 
                     className="dragger"
@@ -47,7 +53,9 @@ export default function App(){
                     <p className="action-label">{actionLabel}</p>
                 </div>
     }
-
+    /**
+     * @description - returns connector and "+" sign
+     */
     function getActionInsert(top){
         return  <div id="add-action" style={{display: 'block'}}>
         <div className="new-action-connector"></div> 
@@ -72,16 +80,17 @@ export default function App(){
         </div>
                 </div> 
     }
-    
-    function addAction(e){
-        let checkProp = false;
+    /**
+     * @description - adds div for new action in second to last index of state array
+     */
+    function addAction(){
         if( newState.length == 0 ){
             for( var i = 0; i<state.length; i++ ){
                 if(state[i]["props"]["id"]=='add-action'){
                     newState.push(getConnector(100, '63%'));
                     newState.push(getInitDiv('Action Instance', 50+(65*i), '50%'));
                     newState.push(getActionInsert((i*65)+100));
-                    newState.remove((newState.length -1));
+                    // newState.remove((newState.length -1));
                 }else if(state[i]["props"]["id"]!='foo'){ // dont add text input to new state
                     newState.push(state[i]);           
                 }
@@ -94,9 +103,10 @@ export default function App(){
                     backgroundColor: "white", 
                     height: 400, 
                     width: 275,
-                    borderRadius: "5%",
+                    borderRadius: "2%",
                     boxShadow: "0 0 2.5px rgb(206, 206, 206)",
-                    padding: 15
+                    padding: 15,
+                    overflow: "scroll"
                 }}>
                     <p>Add an Action</p>
                     <div className="action-types">
@@ -104,15 +114,16 @@ export default function App(){
                             marginTop: "-5px"
                         }}>Type Action</p>
                         <div className="types">
-                            <p className="type">Call</p>
-                            <p className="type">Email</p>
-                            <p className="type">SMS</p>
-                            <p className="type">Task</p>
+                            <p className="type" onClick={selectActionType}>Call</p>
+                            <p className="type" onClick={selectActionType}>Email</p>
+                            <p className="type" onClick={selectActionType}>SMS</p>
+                            <p className="type" onClick={selectActionType}>Task</p>
                         </div>
                         <form>
                             <div>
                                 <label>Select Action <br />
-                                    <input type="text" name="action"/>
+                                    <input type="text" onFocus={getActions} name="action" id="action_input"/>
+                                    <div id="action-results" className="action-result-panel"></div>
                                 </label>
                             </div>
                             <div>
@@ -157,23 +168,65 @@ export default function App(){
             setState(newnewState);
         }
     }
+
+    function handleActionClick(e){
+        log('running');
+        log(e.target.textContent);
+        let i = document.getElementById('action_input');
+        i.value = e.target.textContent;
+
+        let resultsToDisperse = document.querySelectorAll(".action-name");
+        log('dispersing '+resultsToDisperse.length);
+        for( let x = 0; x < resultsToDisperse.length; x++){
+            resultsToDisperse[x].remove();
+        }
+    }
+
+    function getActions(e){
+        if(e.target.value.length > 2){
+            log('running');
+            fetchActions(e.target.value);
+        }
+    }
+
+    function fetchActions(actionName){
+        Visualforce.remoting.Manager.invokeAction(
+            'ReactController.getActions',
+            actionName,
+            (results, event) => {
+                if(event.status){
+                    console.log('callback');
+                    let viewResults = document.getElementById("action-results");
+                    for(let i = 0 ; i<results.length; i++){
+                        let p = document.createElement("P");
+                        let textNode = document.createTextNode('Name: '+results[i]["Name"]);
+                        p.appendChild(textNode);
+                        p.className='action-name';
+                        p.addEventListener("click", handleActionClick);
+                        viewResults.appendChild(p);
+                    }
+                }
+            }
+        );
+    }
+
+    function selectActionType(e){
+        selectedActionType = e.target.textContent;
+    }
+
     function handleMouseDown(){
-        // setClicked(true);
         click = true;
     }
 
     function handleMouseUp(){
-        // setClicked(false);
         click = false;
     }
 
         function handleMouseOut(){
-        // setClicked(false);
         click = false;
     }
 
     function handleScroll(e){
-        console.log('clicked? '+click);
         if(click){
             e.target.setAttribute('style','top:'+(e.clientY - 40)+'px; left:'+(e.clientX - 40)+'px;');
         }
