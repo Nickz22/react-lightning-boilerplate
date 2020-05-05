@@ -7837,7 +7837,7 @@ function App() {
                                     null,
                                     'Select Action ',
                                     _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'text', onFocus: getActions, name: 'action', id: 'action_input' }),
+                                    _react2.default.createElement('input', { type: 'text', onKeyUp: getActions, name: 'action', id: 'action_input' }),
                                     _react2.default.createElement('div', { id: 'action-results', className: 'action-result-panel' })
                                 )
                             ),
@@ -7929,21 +7929,24 @@ function App() {
     }
 
     function handleActionClick(e) {
-        log('running');
         log(e.target.textContent);
         var i = document.getElementById('action_input');
         i.value = e.target.textContent;
+        disperseActions();
+    }
 
+    function disperseActions() {
         var resultsToDisperse = document.querySelectorAll(".action-name");
-        log('dispersing ' + resultsToDisperse.length);
-        for (var x = 0; x < resultsToDisperse.length; x++) {
-            resultsToDisperse[x].remove();
+        if (resultsToDisperse && resultsToDisperse.length > 0) {
+            for (var x = 0; x < resultsToDisperse.length; x++) {
+                resultsToDisperse[x].remove();
+            }
         }
     }
 
     function getActions(e) {
         if (e.target.value.length > 2) {
-            log('running');
+            disperseActions();
             fetchActions(e.target.value);
         }
     }
@@ -7955,7 +7958,7 @@ function App() {
                 var viewResults = document.getElementById("action-results");
                 for (var i = 0; i < results.length; i++) {
                     var p = document.createElement("P");
-                    var textNode = document.createTextNode('Name: ' + results[i]["Name"]);
+                    var textNode = document.createTextNode(results[i]["Name"]);
                     p.appendChild(textNode);
                     p.className = 'action-name';
                     p.addEventListener("click", handleActionClick);

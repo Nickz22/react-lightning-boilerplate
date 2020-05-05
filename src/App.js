@@ -122,7 +122,7 @@ export default function App(){
                         <form>
                             <div>
                                 <label>Select Action <br />
-                                    <input type="text" onFocus={getActions} name="action" id="action_input"/>
+                                    <input type="text" onKeyUp={getActions} name="action" id="action_input"/>
                                     <div id="action-results" className="action-result-panel"></div>
                                 </label>
                             </div>
@@ -170,21 +170,24 @@ export default function App(){
     }
 
     function handleActionClick(e){
-        log('running');
         log(e.target.textContent);
         let i = document.getElementById('action_input');
         i.value = e.target.textContent;
+        disperseActions();
+    }
 
+    function disperseActions(){
         let resultsToDisperse = document.querySelectorAll(".action-name");
-        log('dispersing '+resultsToDisperse.length);
-        for( let x = 0; x < resultsToDisperse.length; x++){
-            resultsToDisperse[x].remove();
+        if(resultsToDisperse && resultsToDisperse.length > 0){
+            for( let x = 0; x < resultsToDisperse.length; x++){
+                resultsToDisperse[x].remove();
+            }
         }
     }
 
     function getActions(e){
         if(e.target.value.length > 2){
-            log('running');
+            disperseActions();
             fetchActions(e.target.value);
         }
     }
@@ -199,7 +202,7 @@ export default function App(){
                     let viewResults = document.getElementById("action-results");
                     for(let i = 0 ; i<results.length; i++){
                         let p = document.createElement("P");
-                        let textNode = document.createTextNode('Name: '+results[i]["Name"]);
+                        let textNode = document.createTextNode(results[i]["Name"]);
                         p.appendChild(textNode);
                         p.className='action-name';
                         p.addEventListener("click", handleActionClick);
