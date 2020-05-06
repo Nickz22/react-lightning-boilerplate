@@ -13,14 +13,7 @@
     cursor: pointer;
     border-radius: 3%;
 }
-.new-action-connector{
-    height: 12px;
-    width: 1px;
-    background-color: rgb(170, 170, 170);
-    position: relative;
-    top: 0;
-    left: 100px;
-}
+
 
 .line-connector{
     height: 12px;
@@ -29,17 +22,6 @@
     z-index: 10;
     position: relative;
     left: 100px;
-}
-
-.modal-header{
-    /* font-family: Logical;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 18px; */
-}
-
-.action-types{
-    display: block;
 }
 
 form{
@@ -51,28 +33,6 @@ form > div{
 button{
     margin-top: 25px;
 }
-.type-header{
-    font-family: logical;
-    font-style: normal;
-    font-size: 7px;
-}
-
-.types{
-    display: flex;
-    padding: 2px;
-    font-size: 9px;
-}
-
-.type{
-    font-family: logical;
-    margin-left: 30px;
-    display: flex;
-}
-
-.type:hover{
-    cursor:pointer;
-    color: greenyellow;
-}
 
 label{
     font-size: 9px;
@@ -83,21 +43,7 @@ label{
     background-color: red;
 }
 
-.add-action{
-    padding: 0 89px;
-    cursor:pointer;
-}
 
-.action-result-panel{
-    background-color: beige;
-    max-height: 200px;
-    overflow:scroll;
-    cursor:pointer;   
-}
-
-.action-label{
-    padding: 15px 15px;
-}
 
 .action-name:hover{
     border-bottom: 1px solid black;

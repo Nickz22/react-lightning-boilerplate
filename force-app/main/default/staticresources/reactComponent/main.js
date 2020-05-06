@@ -7664,13 +7664,29 @@ var _react2 = _interopRequireDefault(_react);
 
 __webpack_require__(13);
 
+var _Box = __webpack_require__(18);
+
+var _Box2 = _interopRequireDefault(_Box);
+
+var _Modal = __webpack_require__(21);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+var _AddAction = __webpack_require__(24);
+
+var _AddAction2 = _interopRequireDefault(_AddAction);
+
+var _Util = __webpack_require__(27);
+
+var _Util2 = _interopRequireDefault(_Util);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
     /**
      * @description - initial div and input for Sequence Name
      */
-    var _useState = (0, _react.useState)([getInitDiv('', 50, '50%'), getActionInsert(100), _react2.default.createElement('input', { type: 'text', id: 'foo', onKeyUp: setSequenceName })]),
+    var _useState = (0, _react.useState)([getInitDiv('', 50, '50%'), getActionInsert(), _react2.default.createElement('input', { type: 'text', id: 'foo', onKeyUp: setSequenceName })]),
         _useState2 = _slicedToArray(_useState, 2),
         state = _useState2[0],
         setState = _useState2[1];
@@ -7708,230 +7724,78 @@ function App() {
      * @description - returns a 'dragger' div used for actions and sequence name
      */
     function getInitDiv(actionLabel, top, left) {
-        return _react2.default.createElement(
-            'div',
-            { onMouseDown: handleMouseDown,
-                className: 'dragger',
-                onMouseUp: handleMouseUp,
-                onMouseOut: handleMouseOut,
-                onMouseMove: handleScroll,
-                id: 'dont-drag' },
-            _react2.default.createElement(
-                'p',
-                { className: 'action-label' },
-                actionLabel
-            )
-        );
+        return _react2.default.createElement(_Box2.default, { label: actionLabel, handlemousedown: handleMouseDown });
     }
     /**
      * @description - returns connector and "+" sign
      */
-    function getActionInsert(top) {
-        return _react2.default.createElement(
-            'div',
-            { id: 'add-action', style: { display: 'block' } },
-            _react2.default.createElement('div', { className: 'new-action-connector' }),
-            _react2.default.createElement(
-                'div',
-                { className: 'add-action', onClick: addAction },
-                _react2.default.createElement(
-                    'svg',
-                    { width: '25', height: '25' },
-                    _react2.default.createElement('circle', { cx: '12', cy: '12', r: '12',
-                        fill: 'rgb(131,197,82)' }),
-                    _react2.default.createElement('rect', { width: '2',
-                        height: '12',
-                        style: { fill: "rgb(255,255,255)",
-                            x: 10,
-                            y: 5,
-                            rx: 1, ry: 1,
-                            strokeLinecap: "round" } }),
-                    _react2.default.createElement('rect', { width: '12',
-                        height: '2',
-                        style: { fill: "rgb(255,255,255)",
-                            y: 10,
-                            x: 5, rx: 1, ry: 1,
-                            strokeLinecap: "round" } })
-                )
-            )
-        );
+    function getActionInsert() {
+        return _react2.default.createElement(_AddAction2.default, { id: 'add-action', addaction: addAction });
     }
     /**
      * @description - adds div for new action in second to last index of state array
      */
     function addAction() {
         if (newState.length == 0) {
-            for (var i = 0; i < state.length; i++) {
-                if (state[i]["props"]["id"] == 'add-action') {
-                    newState.push(getConnector(100, '63%'));
-                    newState.push(getInitDiv('Action Instance', 50 + 65 * i, '50%'));
-                    newState.push(getActionInsert(i * 65 + 100));
-                    // newState.remove((newState.length -1));
-                } else if (state[i]["props"]["id"] != 'foo') {
-                    // dont add text input to new state
-                    newState.push(state[i]);
-                }
-            }
-            if (!modal) {
-                newState.push(_react2.default.createElement(
-                    'div',
-                    { style: {
-                            position: "fixed",
-                            top: "10%",
-                            left: "50%",
-                            backgroundColor: "white",
-                            height: 400,
-                            width: 275,
-                            borderRadius: "2%",
-                            boxShadow: "0 0 2.5px rgb(206, 206, 206)",
-                            padding: 15,
-                            overflow: "scroll"
-                        } },
-                    _react2.default.createElement(
-                        'p',
-                        null,
-                        'Add an Action'
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'action-types' },
-                        _react2.default.createElement(
-                            'p',
-                            { className: 'type-header', style: {
-                                    marginTop: "-5px"
-                                } },
-                            'Type Action'
-                        ),
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'types' },
-                            _react2.default.createElement(
-                                'p',
-                                { className: 'type', onClick: selectActionType },
-                                'Call'
-                            ),
-                            _react2.default.createElement(
-                                'p',
-                                { className: 'type', onClick: selectActionType },
-                                'Email'
-                            ),
-                            _react2.default.createElement(
-                                'p',
-                                { className: 'type', onClick: selectActionType },
-                                'SMS'
-                            ),
-                            _react2.default.createElement(
-                                'p',
-                                { className: 'type', onClick: selectActionType },
-                                'Task'
-                            )
-                        ),
-                        _react2.default.createElement(
-                            'form',
-                            null,
-                            _react2.default.createElement(
-                                'div',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    null,
-                                    'Select Action ',
-                                    _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'text', onKeyUp: getActions, name: 'action', id: 'action_input' }),
-                                    _react2.default.createElement('div', { id: 'action-results', className: 'action-result-panel' })
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'div',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    null,
-                                    'Execution Time ',
-                                    _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'text', name: 'time' })
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'div',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    null,
-                                    'Field Updates ',
-                                    _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'radio' }),
-                                    '  No Field Updates',
-                                    _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'radio' }),
-                                    '  Field Updates Required',
-                                    _react2.default.createElement('br', null)
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'div',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    null,
-                                    'Criteria ',
-                                    _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'radio' }),
-                                    '  No Additional Criteria',
-                                    _react2.default.createElement('br', null),
-                                    _react2.default.createElement('input', { type: 'radio' }),
-                                    '  Conditions are met',
-                                    _react2.default.createElement('br', null)
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'div',
-                                { style: { display: "flex", height: "40px", width: "70px" } },
-                                _react2.default.createElement(
-                                    'button',
-                                    { type: 'reset', style: { border: "none", borderRadius: "2%" } },
-                                    _react2.default.createElement(
-                                        'p',
-                                        { style: { color: "grey", fontSize: "10px" } },
-                                        'Cancel'
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    'button',
-                                    { type: 'submit', style: { backgroundColor: "lightgreen", borderRadius: "2%" } },
-                                    _react2.default.createElement(
-                                        'p',
-                                        { style: { fontSize: "10px" } },
-                                        'Save'
-                                    )
-                                )
-                            )
-                        )
-                    )
-                ));
-                modal = true;
-            }
+            getInitialState();
+            showModal(modal);
             setState(newState);
         } else {
-            var newnewState = [];
-            for (var _i = 0; _i < newState.length; _i++) {
-                if (newState[_i]["props"]["id"] == 'add-action') {
-                    newnewState.push(getConnector(56 * _i, '63%'));
-                    newnewState.push(getInitDiv('Action Instance', 58 * _i, '50%'));
-                    newnewState.push(getActionInsert(_i * 60));
-                } else {
-                    newnewState.push(newState[_i]);
-                }
-            }
-            newState = newnewState;
-            setState(newnewState);
+            newState = getUpdatedState();
+            setState(newState);
         }
     }
 
+    function getInitialState() {
+        for (var i = 0; i < state.length; i++) {
+            if (state[i]["props"]["id"] == 'add-action') {
+                newState.push(getConnector(100, '63%'));
+                newState.push(getInitDiv('Action Instance', 50 + 65 * i, '50%'));
+                newState.push(getActionInsert());
+            } else if (state[i]["props"]["id"] != 'foo') {
+                // dont add text input to new state
+                newState.push(state[i]);
+            }
+        }
+    }
+
+    function getUpdatedState() {
+        var newnewState = [];
+        for (var i = 0; i < newState.length; i++) {
+            if (newState[i]["props"]["id"] == 'add-action') {
+                newnewState.push(getConnector(56 * i, '63%'));
+                newnewState.push(getInitDiv('Action Instance', 58 * i, '50%'));
+                newnewState.push(getActionInsert());
+            } else {
+                newnewState.push(newState[i]);
+            }
+        }
+        return newnewState;
+    }
+
+    function showModal(modal) {
+        if (modal) {
+            return;
+        }
+        newState.push(_react2.default.createElement(_Modal2.default, { selectactiontype: selectActionType, getactions: getActions, saveaction: saveAction }));
+        modal = true;
+    }
+
+    function saveAction() {
+        var action = {};
+        action["CadenceAction_ID__c"] = document.getElementById('action-results').dataset.selectedrecordid;
+        Visualforce.remoting.Manager.invokeAction('ReactController.saveAction', JSON.stringify(action), function (results, event) {
+            if (event.status) {
+                console.log('saved successfully ' + results[0]);
+            }
+        });
+    }
+
     function handleActionClick(e) {
-        log(e.target.textContent);
-        var i = document.getElementById('action_input');
-        i.value = e.target.textContent;
+        var input = document.getElementById('action_input');
+        input.value = e.target.textContent;
+        var i = document.getElementById('action-results');
+        i.dataset.selectedrecordid = e.target.dataset.recordid;
         disperseActions();
     }
 
@@ -7951,21 +7815,24 @@ function App() {
         }
     }
 
-    function fetchActions(actionName) {
-        Visualforce.remoting.Manager.invokeAction('ReactController.getActions', actionName, function (results, event) {
-            if (event.status) {
-                console.log('callback');
-                var viewResults = document.getElementById("action-results");
-                for (var i = 0; i < results.length; i++) {
-                    var p = document.createElement("P");
-                    var textNode = document.createTextNode(results[i]["Name"]);
-                    p.appendChild(textNode);
-                    p.className = 'action-name';
-                    p.addEventListener("click", handleActionClick);
-                    viewResults.appendChild(p);
-                }
-            }
-        });
+    function processFetchResults(results) {
+        console.log('callback');
+        var viewResults = document.getElementById("action-results");
+        for (var i = 0; i < results.length; i++) {
+            var p = document.createElement("P");
+            var textNode = document.createTextNode(results[i]["Name"]);
+            p.appendChild(textNode);
+            p.className = 'action-name';
+            p.dataset.recordid = results[i]["Id"];
+            p.addEventListener("click", handleActionClick);
+            viewResults.appendChild(p);
+        }
+    }
+
+    async function fetchActions(actionName) {
+        var result = await (0, _Util2.default)('ReactController.getActions', actionName, processFetchResults);
+        // let result = await doApexAction();
+        log('result ==> ' + result);
     }
 
     function selectActionType(e) {
@@ -8035,7 +7902,7 @@ exports = module.exports = __webpack_require__(15)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n.new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.modal-header{\n    /* font-family: Logical;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 18px; */\n}\n\n.action-types{\n    display: block;\n}\n\nform{\n    margin: 10px;\n}\nform > div{\n    margin-top: 10px;\n}\nbutton{\n    margin-top: 25px;\n}\n.type-header{\n    font-family: logical;\n    font-style: normal;\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    padding: 2px;\n    font-size: 9px;\n}\n\n.type{\n    font-family: logical;\n    margin-left: 30px;\n    display: flex;\n}\n\n.type:hover{\n    cursor:pointer;\n    color: greenyellow;\n}\n\nlabel{\n    font-size: 9px;\n}\n\n\n.modal{\n    background-color: red;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}\n\n.action-result-panel{\n    background-color: beige;\n    max-height: 200px;\n    overflow:scroll;\n    cursor:pointer;   \n}\n\n.action-label{\n    padding: 15px 15px;\n}\n\n.action-name:hover{\n    border-bottom: 1px solid black;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\nform{\n    margin: 10px;\n}\nform > div{\n    margin-top: 10px;\n}\nbutton{\n    margin-top: 25px;\n}\n\nlabel{\n    font-size: 9px;\n}\n\n\n.modal{\n    background-color: red;\n}\n\n\n\n.action-name:hover{\n    border-bottom: 1px solid black;\n}", ""]);
 
 // exports
 
@@ -8602,6 +8469,414 @@ module.exports = function (css) {
 	// send back the fixed css
 	return fixedCss;
 };
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__(19);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Box = function Box(_ref) {
+    var label = _ref.label,
+        handlemousedown = _ref.handlemousedown;
+
+    return _react2.default.createElement(
+        "div",
+        { onMouseDown: handlemousedown,
+            className: "dragger"
+            // onMouseUp={handleMouseUp}           will need
+            // onMouseOut={handleMouseOut}         these for 
+            // onMouseMove={handleScroll}      moving action order
+            , id: "dont-drag" },
+        _react2.default.createElement(
+            "p",
+            { className: "action-label" },
+            label
+        )
+    );
+};
+
+exports.default = Box;
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(20);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(16)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(15)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__(22);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Modal = function Modal(_ref) {
+    var selectactiontype = _ref.selectactiontype,
+        getactions = _ref.getactions,
+        saveaction = _ref.saveaction;
+
+    return _react2.default.createElement(
+        "div",
+        { style: {
+                position: "fixed",
+                top: "10%",
+                left: "50%",
+                backgroundColor: "white",
+                height: 400,
+                width: 275,
+                borderRadius: "2%",
+                boxShadow: "0 0 2.5px rgb(206, 206, 206)",
+                padding: 15,
+                overflow: "scroll"
+            } },
+        _react2.default.createElement(
+            "p",
+            null,
+            "Add an Action"
+        ),
+        _react2.default.createElement(
+            "div",
+            { className: "action-types" },
+            _react2.default.createElement(
+                "p",
+                { className: "type-header", style: {
+                        marginTop: "-5px"
+                    } },
+                "Type Action"
+            ),
+            _react2.default.createElement(
+                "div",
+                { className: "types" },
+                _react2.default.createElement(
+                    "p",
+                    { className: "type", onClick: selectactiontype },
+                    "Call"
+                ),
+                _react2.default.createElement(
+                    "p",
+                    { className: "type", onClick: selectactiontype },
+                    "Email"
+                ),
+                _react2.default.createElement(
+                    "p",
+                    { className: "type", onClick: selectactiontype },
+                    "SMS"
+                ),
+                _react2.default.createElement(
+                    "p",
+                    { className: "type", onClick: selectactiontype },
+                    "Task"
+                )
+            ),
+            _react2.default.createElement(
+                "form",
+                null,
+                _react2.default.createElement(
+                    "div",
+                    null,
+                    _react2.default.createElement(
+                        "label",
+                        null,
+                        "Select Action ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "text", onKeyUp: getactions, name: "action", id: "action_input" }),
+                        _react2.default.createElement("div", { id: "action-results", selectedrecordid: "", className: "action-result-panel" })
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    null,
+                    _react2.default.createElement(
+                        "label",
+                        null,
+                        "Execution Time ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "text", name: "time" })
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    null,
+                    _react2.default.createElement(
+                        "label",
+                        null,
+                        "Field Updates ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  No Field Updates",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  Field Updates Required",
+                        _react2.default.createElement("br", null)
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    null,
+                    _react2.default.createElement(
+                        "label",
+                        null,
+                        "Criteria ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  No Additional Criteria",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  Conditions are met",
+                        _react2.default.createElement("br", null)
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { style: { display: "flex", height: "40px", width: "70px" } },
+                    _react2.default.createElement(
+                        "button",
+                        { type: "reset", style: { border: "none", borderRadius: "2%" } },
+                        _react2.default.createElement(
+                            "p",
+                            { style: { color: "grey", fontSize: "10px" } },
+                            "Cancel"
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "button",
+                        { onClick: saveaction, type: "submit", style: { backgroundColor: "lightgreen", borderRadius: "2%" } },
+                        _react2.default.createElement(
+                            "p",
+                            { style: { fontSize: "10px" } },
+                            "Save"
+                        )
+                    )
+                )
+            )
+        )
+    );
+};
+
+exports.default = Modal;
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(23);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(16)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(15)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".outer-container{\n    position: fixed;\n    top: 10%; \n    left:50%;\n    background-color: white; \n    height: 400px; \n    width: 275px;\n    border-radius: 2%;\n    box-shadow: 0 0 2.5px rgb(206, 206, 206);\n    padding: 15px;\n    overflow: scroll;\n}\n.action-types{\n    display: block;\n}\n.type-header{\n    font-family: logical;\n    font-style: normal;\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    padding: 2px;\n    font-size: 9px;\n}\n\n.type{\n    font-family: logical;\n    margin-left: 30px;\n    display: flex;\n}\n\n.type:hover{\n    cursor:pointer;\n    color: greenyellow;\n}\n\n.action-result-panel{\n    background-color: beige;\n    max-height: 200px;\n    overflow:scroll;\n    cursor:pointer;   \n}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__(25);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AddAction = function AddAction(_ref) {
+    var addaction = _ref.addaction;
+
+    return _react2.default.createElement(
+        'div',
+        { style: { display: 'block' } },
+        _react2.default.createElement('div', { className: 'new-action-connector' }),
+        _react2.default.createElement(
+            'div',
+            { className: 'add-action', onClick: addaction },
+            _react2.default.createElement(
+                'svg',
+                { width: '25', height: '25' },
+                _react2.default.createElement('circle', { cx: '12', cy: '12', r: '12',
+                    fill: 'rgb(131,197,82)' }),
+                _react2.default.createElement('rect', { width: '2',
+                    height: '12',
+                    style: { fill: "rgb(255,255,255)",
+                        x: 10,
+                        y: 5,
+                        rx: 1, ry: 1,
+                        strokeLinecap: "round" } }),
+                _react2.default.createElement('rect', { width: '12',
+                    height: '2',
+                    style: { fill: "rgb(255,255,255)",
+                        y: 10,
+                        x: 5, rx: 1, ry: 1,
+                        strokeLinecap: "round" } })
+            )
+        )
+    );
+};
+exports.default = AddAction;
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(26);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(16)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(15)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".new-action-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    position: relative;\n    top: 0;\n    left: 100px;\n}\n\n.add-action{\n    padding: 0 89px;\n    cursor:pointer;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var doApexAction = function doApexAction(method, params, callback) {
+    console.log('action');
+    console.log('method ==> ' + method);
+    console.log('name ==> ' + params);
+    Visualforce.remoting.Manager.invokeAction(method, params, function (results, event) {
+        if (event.status) {
+            callback(results);
+            return 'success';
+        } else {
+            return 'fail';
+        }
+    });
+};
+
+exports.default = doApexAction;
 
 /***/ })
 /******/ ]);
