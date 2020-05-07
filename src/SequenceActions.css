@@ -1,0 +1,25 @@
+
+form{
+    margin: 10px;
+}
+form > div{
+    margin-top: 10px;
+}
+button{
+    margin-top: 25px;
+}
+
+label{
+    font-size: 9px;
+}
+
+
+.modal{
+    background-color: red;
+}
+
+
+
+.action-name:hover{
+    border-bottom: 1px solid black;
+}

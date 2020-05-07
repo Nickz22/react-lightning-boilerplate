@@ -1,22 +1,22 @@
-import React from "react";
 
 const doApexAction = (method, params, callback) => {
-    console.log('action');
-    console.log('method ==> '+method);
-    console.log('name ==> '+params);
-  Visualforce.remoting.Manager.invokeAction(
+    Visualforce.remoting.Manager.invokeAction(
         method,
         params,
         (results, event) => {
             if(event.status){
                 callback(results);
-                return 'success';
+            }else if(event.type === 'exception'){
+                throw new Error('ERROR: '+event.message+'// STACKTRACE: '+event.where);
+            }else{
+                console.error('unknown error in '+method);
             }
-            else{
-                return 'fail';
-            }    
         }
     );
 };
 
-export default doApexAction;
+const log = message => {
+    console.log(message);
+}
+
+export default {doApexAction, log};

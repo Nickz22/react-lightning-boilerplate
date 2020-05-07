@@ -2,6 +2,7 @@ import React from "react";
 import './Box.css';
 
 const Box = ({label, handlemousedown}) => {
+    console.log('init box with label ==> '+label);
     return (
         <div onMouseDown={handlemousedown} 
             className="dragger"
