@@ -7662,33 +7662,33 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-__webpack_require__(13);
-
-var _SequenceActions = __webpack_require__(18);
+var _SequenceActions = __webpack_require__(13);
 
 var _SequenceActions2 = _interopRequireDefault(_SequenceActions);
 
-var _SequenceCriteria = __webpack_require__(32);
+var _SequenceCriteria = __webpack_require__(23);
 
 var _SequenceCriteria2 = _interopRequireDefault(_SequenceCriteria);
 
-var _SequenceDetail = __webpack_require__(33);
+var _SequenceDetail = __webpack_require__(24);
 
 var _SequenceDetail2 = _interopRequireDefault(_SequenceDetail);
 
-var _ProgressBar = __webpack_require__(34);
+var _ProgressBar = __webpack_require__(25);
 
 var _ProgressBar2 = _interopRequireDefault(_ProgressBar);
 
-var _Box = __webpack_require__(21);
+var _Box = __webpack_require__(28);
 
 var _Box2 = _interopRequireDefault(_Box);
 
-var _Util = __webpack_require__(31);
-
-var _AddAction = __webpack_require__(27);
+var _AddAction = __webpack_require__(31);
 
 var _AddAction2 = _interopRequireDefault(_AddAction);
+
+var _Util = __webpack_require__(20);
+
+__webpack_require__(35);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7702,7 +7702,6 @@ function App() {
         setView = _useState2[1];
 
     function getUpdatedView() {
-        console.log('updating view with step ==> ' + step);
         var viewMap = {
             0: _react2.default.createElement('div', null),
             1: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
@@ -7710,30 +7709,47 @@ function App() {
                 { id: 'sequence-detail' },
                 _react2.default.createElement(_SequenceDetail2.default, { ondone: closeModal })
             )],
-            2: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps }), _react2.default.createElement(
+            2: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: 'criteria', className: 'show' },
-                _react2.default.createElement(_SequenceCriteria2.default, { type: 'entry criteria', ondone: closeModal })
+                { id: 'criteria-entry', className: 'show' },
+                _react2.default.createElement(_SequenceCriteria2.default, { type: 'Entry Criteria', ondone: closeModal })
             )],
-            3: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps }), _react2.default.createElement(_SequenceCriteria2.default, { type: 'exit', ondone: closeModal })],
-            4: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps }), _react2.default.createElement(_SequenceActions2.default, { ondone: closeModal })]
+            3: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
+                'div',
+                { id: 'criteria-exit' },
+                _react2.default.createElement(_SequenceCriteria2.default, { type: 'Exit Criteria', ondone: closeModal })
+            )],
+            4: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
+                'div',
+                { id: 'sequence-action', className: 'show' },
+                _react2.default.createElement(_SequenceActions2.default, { ondone: closeModal })
+            )]
         };
-        return viewMap[step];
+        return viewMap[step > 4 ? 4 : step];
     }
 
     function setUpdatedState() {
+        if (step > 4) {
+            document.getElementById("sequence-action").className = "show";
+        }
         setView(getUpdatedView());
     }
 
     function closeModal(event) {
-        console.log('event type ==> ' + event["type"]);
+        (0, _Util.log)('incoming type ==> ' + event["type"]);
         if (event["type"].toLowerCase().includes('detail')) {
-            console.log('hide detail');
             document.getElementById("sequence-detail").className = "hide";
         }
         if (event["type"].toLowerCase().includes('criteria')) {
-            console.log('hide criteria');
-            document.getElementById("criteria").className = "hide";
+            if (document.getElementById("criteria-entry")) document.getElementById("criteria-entry").className = "hide";
+            if (document.getElementById("criteria-exit")) document.getElementById("criteria-exit").className = "hide";
+        }
+        if (event["type"].toLowerCase().includes('exit')) {
+            (0, _Util.log)('exit');
+            document.getElementById("criteria-exit").className = "hide";
+        }
+        if (event["type"].toLowerCase().includes('action')) {
+            document.getElementById("sequence-action").className = "hide";
         }
         showNextStep(event["name"]);
     }
@@ -7742,20 +7758,24 @@ function App() {
             step++;
             document.getElementsByTagName("button")[0].remove();
             setView(getUpdatedView());
-        } else if (label && label.length > 0 && sequenceSteps.length <= 2) {
-            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: label }));
+        } else if (label && label.length > 0 && sequenceSteps.length <= 1) {
+            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: label, onclick: bubbleLabel }));
             sequenceSteps.push(getActionInsert());
             setView(getUpdatedView());
             step++;
-        } else if (sequenceSteps.length > 2) {
+        } else {
+            var actionInsert = sequenceSteps.pop();
             sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector' }));
-            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: label }));
-            sequenceSteps.push(getActionInsert());
+            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: label, onClick: bubbleLabel }));
+            sequenceSteps.push(actionInsert);
             setView(getUpdatedView());
             step++;
         }
-        console.log('step 2 ==> ' + step);
     }
+    function bubbleLabel(label) {
+        (0, _Util.log)('label received ==> ' + label);
+    }
+
     /**
      * @description - returns connector and "+" sign
      */
@@ -7767,9 +7787,19 @@ function App() {
      * @description - adds div for new action in second to last index of state array
      */
     function addAction() {
-        // action();
-        console.log('add');
         setUpdatedState();
+    }
+    /**
+     * @description will need when user saves the sequence
+     * @param {String} label 
+     */
+    async function saveAction(label) {
+        var action = {};
+        action["CadenceAction_ID__c"] = document.getElementById('action-results').dataset.selectedrecordid;
+        doApexAction('ReactController.saveAction', JSON.stringify(action), function (results) {
+            (0, _Util.log)('saved ==> ' + JSON.stringify(results));
+        });
+        addAction(label);
     }
     return _react2.default.createElement(
         'div',
@@ -7789,8 +7819,558 @@ function App() {
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
 
-var content = __webpack_require__(14);
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+exports.default = SequenceActions;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Modal = __webpack_require__(14);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+var _Util = __webpack_require__(20);
+
+__webpack_require__(21);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function SequenceActions(_ref) {
+    var ondone = _ref.ondone;
+
+    var _useState = (0, _react.useState)([_react2.default.createElement(_Modal2.default, { type: 'Add an Action', select: selectActionType, oninputkeydown: getActions, saveaction: ondone })]),
+        _useState2 = _slicedToArray(_useState, 2),
+        state = _useState2[0],
+        setState = _useState2[1];
+
+    function getActions(e) {
+        if (e.target.value.length > 2) {
+            disperseActions();
+            fetchActions(e.target.value);
+        }
+    }
+    function fetchActions(actionName) {
+        (0, _Util.doApexAction)('ReactController.getActions', actionName, processFetchResults);
+    }
+
+    function handleActionClick(e) {
+        var input = document.getElementById('action_input');
+        input.value = e.target.textContent;
+        var i = document.getElementById('action-results');
+        i.dataset.selectedrecordid = e.target.dataset.recordid;
+        disperseActions();
+    }
+
+    function disperseActions() {
+        var resultsToDisperse = document.querySelectorAll(".action-name");
+        if (resultsToDisperse && resultsToDisperse.length > 0) {
+            for (var x = 0; x < resultsToDisperse.length; x++) {
+                resultsToDisperse[x].remove();
+            }
+        }
+    }
+
+    function processFetchResults(results) {
+        var viewResults = document.getElementById("action-results");
+        for (var i = 0; i < results.length; i++) {
+            var p = document.createElement("P");
+            var textNode = document.createTextNode(results[i]["Name"]);
+            p.appendChild(textNode);
+            p.className = 'action-name';
+            p.dataset.recordid = results[i]["Id"];
+            p.addEventListener("click", handleActionClick);
+            viewResults.appendChild(p);
+        }
+    }
+
+    function selectActionType(e) {
+        (0, _Util.log)('selected action type ==> ' + e.target.textContent);
+    }
+
+    function handleMouseDown() {
+        click = true;
+    }
+
+    function handleMouseUp() {
+        click = false;
+    }
+
+    function handleMouseOut() {
+        click = false;
+    }
+
+    function handleScroll(e) {
+        if (click) {
+            e.target.setAttribute('style', 'top:' + (e.clientY - 40) + 'px; left:' + (e.clientX - 40) + 'px;');
+        }
+    }
+
+    return _react2.default.createElement(
+        'div',
+        null,
+        state
+    );
+}
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__(15);
+
+var _Util = __webpack_require__(20);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Modal = function Modal(_ref) {
+    var type = _ref.type,
+        select = _ref.select,
+        oninputkeydown = _ref.oninputkeydown,
+        saveaction = _ref.saveaction;
+
+    var _useState = (0, _react.useState)([getContent()]),
+        _useState2 = _slicedToArray(_useState, 1),
+        _useState2$ = _slicedToArray(_useState2[0], 2),
+        modalBody = _useState2$[0],
+        setModalBody = _useState2$[1];
+
+    function getContent() {
+        if (type.toLowerCase().includes('action')) return getSequenceActionContent();
+        if (type.toLowerCase().includes('detail')) return getSequenceDetailContent();
+        if (type.toLowerCase().includes('entry')) return getEntryCriteriaContent();
+        if (type.toLowerCase().includes('exit')) return getExitCriteriaContent();
+    }
+    function save(type) {
+        if (type.toLowerCase().includes('action')) {
+            var name = document.getElementById('action_input').value;
+            saveaction({ "name": name, "type": type });
+        }
+        if (type.toLowerCase().includes('detail')) {
+            var _name = document.getElementById('action_input').value;
+            saveaction({ "name": _name, "type": type });
+        }
+        if (type.toLowerCase().includes('entry')) {
+            var _name2 = document.getElementById('action_input').value;
+            saveaction({ "name": _name2, "type": type });
+        }
+    }
+
+    function getSequenceDetailContent() {
+        return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(
+                'p',
+                { className: 'type-header', style: {
+                        marginTop: "-5px"
+                    } },
+                'Sequence Detail'
+            ),
+            _react2.default.createElement(
+                'form',
+                null,
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Sequence Name',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
+                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'types' },
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'type', onClick: select },
+                        'IMG'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'type', onClick: select },
+                        'IMG'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'type', onClick: select },
+                        'IMG'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'type', onClick: select },
+                        'IMG'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'type', onClick: select },
+                        'IMG'
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Activation Type ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  Automatic',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  Manual',
+                        _react2.default.createElement('br', null)
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Priority ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  1',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  2',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  3',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  4',
+                        _react2.default.createElement('br', null)
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { style: { display: "flex", height: "40px", width: "70px" } },
+                    _react2.default.createElement(
+                        'p',
+                        { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
+                        'Cancel'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { onClick: function onClick() {
+                                return save(type);
+                            }, style: { fontSize: "10px", marginLeft: "5px" } },
+                        'Save'
+                    )
+                )
+            )
+        );
+    }
+
+    function getSequenceActionContent() {
+        return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(
+                'p',
+                { className: 'type-header', style: {
+                        marginTop: "-5px"
+                    } },
+                'Type Action'
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'types' },
+                _react2.default.createElement(
+                    'p',
+                    { className: 'type', onClick: select },
+                    'Call'
+                ),
+                _react2.default.createElement(
+                    'p',
+                    { className: 'type', onClick: select },
+                    'Email'
+                ),
+                _react2.default.createElement(
+                    'p',
+                    { className: 'type', onClick: select },
+                    'SMS'
+                ),
+                _react2.default.createElement(
+                    'p',
+                    { className: 'type', onClick: select },
+                    'Task'
+                )
+            ),
+            _react2.default.createElement(
+                'form',
+                null,
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Select Action ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
+                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Execution Time ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'text', name: 'time' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Field Updates ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  No Field Updates',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  Field Updates Required',
+                        _react2.default.createElement('br', null)
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Criteria ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  No Additional Criteria',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  Conditions are met',
+                        _react2.default.createElement('br', null)
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { style: { display: "flex", height: "40px", width: "70px" } },
+                    _react2.default.createElement(
+                        'p',
+                        { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
+                        'Cancel'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { onClick: function onClick() {
+                                return save(type);
+                            }, style: { fontSize: "10px", marginLeft: "5px" } },
+                        'Save'
+                    )
+                )
+            )
+        );
+    }
+
+    function getEntryCriteriaContent() {
+        return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(
+                'p',
+                { className: 'type-header', style: {
+                        marginTop: "-5px"
+                    } },
+                'Condition'
+            ),
+            _react2.default.createElement(
+                'form',
+                null,
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Select Field ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
+                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Select Operator ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'text', name: 'time' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Select Value ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  No Field Updates',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  Field Updates Required',
+                        _react2.default.createElement('br', null)
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { style: { display: "flex", height: "40px", width: "70px" } },
+                    _react2.default.createElement(
+                        'p',
+                        { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
+                        'Cancel'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { onClick: function onClick() {
+                                return save(type);
+                            }, style: { fontSize: "10px", marginLeft: "5px" } },
+                        'Save'
+                    )
+                )
+            )
+        );
+    }
+    function getExitCriteriaContent() {
+        return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(
+                'p',
+                { className: 'type-header', style: {
+                        marginTop: "-5px"
+                    } },
+                'Condition'
+            ),
+            _react2.default.createElement(
+                'form',
+                null,
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Select Field ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
+                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Select Operator ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'text', name: 'time' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        'Select Value ',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  No Field Updates',
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement('input', { type: 'radio' }),
+                        '  Field Updates Required',
+                        _react2.default.createElement('br', null)
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { style: { display: "flex", height: "40px", width: "70px" } },
+                    _react2.default.createElement(
+                        'p',
+                        { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
+                        'Cancel'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { onClick: function onClick() {
+                                return save(type);
+                            }, style: { fontSize: "10px", marginLeft: "5px" } },
+                        'Save'
+                    )
+                )
+            )
+        );
+    }
+    return _react2.default.createElement(
+        'div',
+        { className: 'outer-container' },
+        _react2.default.createElement(
+            'p',
+            null,
+            type
+        ),
+        _react2.default.createElement(
+            'div',
+            { className: 'action-types' },
+            modalBody
+        )
+    );
+};
+
+exports.default = Modal;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(16);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -7804,28 +8384,28 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(false);
+exports = module.exports = __webpack_require__(17)(false);
 // imports
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.hide{\n    display: hidden;\n}\n.show{\n    display: block;\n}", ""]);
+exports.push([module.i, ".outer-container{\n    position: fixed;\n    top: 10%; \n    left:50%;\n    background-color: white; \n    height: 350px; \n    width: 275px;\n    border-radius: 2%;\n    box-shadow: 0 0 2.5px rgb(206, 206, 206);\n    padding: 15px;\n    overflow: scroll;\n}\n.action-types{\n    display: block;\n}\n.type-header{\n    font-family: logical;\n    font-style: normal;\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    flex-wrap: wrap;\n    padding: 2px;\n    font-size: 9px;\n}\n\n.type{\n    font-family: logical;\n    margin-left: 30px;\n    display: flex;\n}\n\np:hover{\n    cursor:pointer;\n    color: greenyellow;\n}\n\n.action-result-panel{\n    background-color: beige;\n    max-height: 200px;\n    overflow:scroll;\n    cursor:pointer;   \n}\n\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7907,7 +8487,7 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -7973,7 +8553,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(17);
+var	fixUrls = __webpack_require__(19);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -8293,7 +8873,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8388,7 +8968,7 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8398,167 +8978,31 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-exports.default = SequenceActions;
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-__webpack_require__(19);
-
-var _Box = __webpack_require__(21);
-
-var _Box2 = _interopRequireDefault(_Box);
-
-var _Modal = __webpack_require__(24);
-
-var _Modal2 = _interopRequireDefault(_Modal);
-
-var _AddAction = __webpack_require__(27);
-
-var _AddAction2 = _interopRequireDefault(_AddAction);
-
-var _Util = __webpack_require__(31);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function SequenceActions() {
-    /**
-     * @description - initial div and input for Sequence Name
-     */
-    var _useState = (0, _react.useState)([getInitDiv(''), getActionInsert(), _react2.default.createElement('input', { type: 'text', id: 'foo', onKeyUp: setSequenceName })]),
-        _useState2 = _slicedToArray(_useState, 2),
-        state = _useState2[0],
-        setState = _useState2[1];
-    /**
-     * @description - using newState for state management, {state} will always be set with newState value
-     *                  I couldn't figure out how to directly use {state} for this.
-     */
-
-
-    var newState = [];
-    /**
-     * @description - if {clicked} is true, target will move vertically
-     */
-    /**
-     * @description - if true, target will drag vertically
-     */
-    var click = false;
-    /**
-     * @description - flag to indicate that the Add Action modal is open
-     */
-    var modal = false;
-    var sequenceName = '';
-    var selectedActionType = '';
-
-    function setSequenceName(e) {
-        sequenceName = e.target.value;
-        e.target.parentNode.firstChild.textContent = sequenceName;
-    }
-    /**
-     * @description - returns a 'dragger' div used for actions and sequence name
-     */
-    function getInitDiv(actionLabel) {
-        return _react2.default.createElement(_Box2.default, { label: actionLabel, handlemousedown: handleMouseDown });
-    }
-
-    function showModal() {
-        if (modal || !state) {
-            return;
+var doApexAction = function doApexAction(method, params, callback) {
+    Visualforce.remoting.Manager.invokeAction(method, params, function (results, event) {
+        if (event.status) {
+            callback(results);
+        } else if (event.type === 'exception') {
+            throw new Error('ERROR: ' + event.message + '// STACKTRACE: ' + event.where);
+        } else {
+            console.error('unknown error in ' + method);
         }
-        getInitialState();
-        newState.push(_react2.default.createElement(_Modal2.default, { type: 'Add an Action', selectactiontype: selectActionType, getactions: getActions, oninputkeydown: saveAction }));
-        modal = true;
-        setState(newState);
-    }
+    });
+};
 
-    async function saveAction(label) {
-        var action = {};
-        action["CadenceAction_ID__c"] = document.getElementById('action-results').dataset.selectedrecordid;
-        (0, _Util.doApexAction)('ReactController.saveAction', JSON.stringify(action), function (results) {
-            (0, _Util.log)('saved ==> ' + JSON.stringify(results));
-        });
-        addAction(label);
-    }
+var log = function log(message) {
+    console.log(message);
+};
 
-    function handleActionClick(e) {
-        var input = document.getElementById('action_input');
-        input.value = e.target.textContent;
-        var i = document.getElementById('action-results');
-        i.dataset.selectedrecordid = e.target.dataset.recordid;
-        disperseActions();
-    }
-
-    function disperseActions() {
-        var resultsToDisperse = document.querySelectorAll(".action-name");
-        if (resultsToDisperse && resultsToDisperse.length > 0) {
-            for (var x = 0; x < resultsToDisperse.length; x++) {
-                resultsToDisperse[x].remove();
-            }
-        }
-    }
-
-    function getActions(e) {
-        if (e.target.value.length > 2) {
-            disperseActions();
-            fetchActions(e.target.value);
-        }
-    }
-
-    function processFetchResults(results) {
-        var viewResults = document.getElementById("action-results");
-        for (var i = 0; i < results.length; i++) {
-            var p = document.createElement("P");
-            var textNode = document.createTextNode(results[i]["Name"]);
-            p.appendChild(textNode);
-            p.className = 'action-name';
-            p.dataset.recordid = results[i]["Id"];
-            p.addEventListener("click", handleActionClick);
-            viewResults.appendChild(p);
-        }
-    }
-
-    async function fetchActions(actionName) {
-        (0, _Util.doApexAction)('ReactController.getActions', actionName, processFetchResults);
-    }
-
-    function selectActionType(e) {
-        selectedActionType = e.target.textContent;
-    }
-
-    function handleMouseDown() {
-        click = true;
-    }
-
-    function handleMouseUp() {
-        click = false;
-    }
-
-    function handleMouseOut() {
-        click = false;
-    }
-
-    function handleScroll(e) {
-        if (click) {
-            e.target.setAttribute('style', 'top:' + (e.clientY - 40) + 'px; left:' + (e.clientX - 40) + 'px;');
-        }
-    }
-
-    return _react2.default.createElement(
-        'div',
-        null,
-        state
-    );
-}
+exports.doApexAction = doApexAction;
+exports.log = log;
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(20);
+var content = __webpack_require__(22);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -8572,17 +9016,17 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(false);
+exports = module.exports = __webpack_require__(17)(false);
 // imports
 
 
@@ -8593,7 +9037,64 @@ exports.push([module.i, "\nform{\n    margin: 10px;\n}\nform > div{\n    margin-
 
 
 /***/ }),
-/* 21 */
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = SequenceCriteria;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Modal = __webpack_require__(14);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function SequenceCriteria(_ref) {
+    var type = _ref.type,
+        ondone = _ref.ondone;
+
+    return _react2.default.createElement(_Modal2.default, { type: type, saveaction: ondone });
+}
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = SequenceDetail;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Modal = __webpack_require__(14);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function SequenceDetail(_ref) {
+    var ondone = _ref.ondone;
+
+    return _react2.default.createElement(_Modal2.default, { type: 'Sequence Detail', saveaction: ondone });
+}
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8607,19 +9108,105 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-__webpack_require__(22);
+__webpack_require__(26);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ProgressBar = function ProgressBar(_ref) {
+    var boxes = _ref.boxes,
+        action = _ref.action;
+
+    var updatedState = [];
+    // for(let i = 0; i<boxes.length; i++){
+    //     if(i > 0 && i % 2 == 0){
+    //         updatedState.push(<div className="line-connector"></div>);4
+    //     }
+    //     updatedState.push(boxes[i]);
+    //     if( i == (boxes.length -1))
+    //         updatedState.push(getActionInsert());
+    // }
+    // boxes = updatedState;
+
+    return _react2.default.createElement(
+        'div',
+        null,
+        boxes
+    );
+};
+
+exports.default = ProgressBar;
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(27);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(18)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(17)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__(29);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Box = function Box(_ref) {
     var label = _ref.label,
-        handlemousedown = _ref.handlemousedown;
+        handlemousedown = _ref.handlemousedown,
+        onclick = _ref.onclick;
 
     console.log('init box with label ==> ' + label);
     return _react2.default.createElement(
         'div',
         { onMouseDown: handlemousedown,
-            className: 'dragger'
+            className: 'dragger',
+            onClick: function onClick() {
+                return onclick(label);
+            }
             // onMouseUp={handleMouseUp}           will need
             // onMouseOut={handleMouseOut}         these for 
             // onMouseMove={handleScroll}      moving action order
@@ -8635,11 +9222,11 @@ var Box = function Box(_ref) {
 exports.default = Box;
 
 /***/ }),
-/* 22 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(23);
+var content = __webpack_require__(30);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -8653,376 +9240,28 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
 
 /***/ }),
-/* 23 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(false);
+exports = module.exports = __webpack_require__(17)(false);
 // imports
 
 
 // module
-exports.push([module.i, ".dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n.action-label{\n    padding: 15px 15px;\n}", ""]);
+exports.push([module.i, ".dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n.action-label{\n    padding: 15px 15px;\n    font-size: small;\n    font-family: Logical;\n}", ""]);
 
 // exports
 
 
 /***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-__webpack_require__(25);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Modal = function Modal(_ref) {
-    var type = _ref.type,
-        selectactiontype = _ref.selectactiontype,
-        oninputkeydown = _ref.oninputkeydown,
-        saveaction = _ref.saveaction;
-
-    var _useState = (0, _react.useState)([getContent()]),
-        _useState2 = _slicedToArray(_useState, 1),
-        _useState2$ = _slicedToArray(_useState2[0], 2),
-        modalBody = _useState2$[0],
-        setModalBody = _useState2$[1];
-
-    function getContent() {
-        console.log('type ==> ' + type);
-        if (type.toLowerCase().includes('action')) return getSequenceActionContent();
-        if (type.toLowerCase().includes('detail')) return getSequenceDetailContent();
-    }
-    function save(type) {
-        if (type.toLowerCase().includes('action')) {
-            var name = document.getElementById('action_input').value;
-            saveaction({ "name": name, "type": type });
-        }
-        if (type.toLowerCase().includes('detail')) {
-            var _name = document.getElementById('action_input').value;
-            saveaction({ "name": _name, "type": type });
-        }
-    }
-
-    function getSequenceDetailContent() {
-        return _react2.default.createElement(
-            'div',
-            null,
-            _react2.default.createElement(
-                'p',
-                { className: 'type-header', style: {
-                        marginTop: "-5px"
-                    } },
-                'Sequence Detail'
-            ),
-            _react2.default.createElement(
-                'form',
-                null,
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Sequence Name',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
-                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'types' },
-                    _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: selectactiontype },
-                        'IMG'
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: selectactiontype },
-                        'IMG'
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: selectactiontype },
-                        'IMG'
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: selectactiontype },
-                        'IMG'
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: selectactiontype },
-                        'IMG'
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Activation Type ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Automatic',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Manual',
-                        _react2.default.createElement('br', null)
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Priority ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  1',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  2',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  3',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  4',
-                        _react2.default.createElement('br', null)
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { style: { display: "flex", height: "40px", width: "70px" } },
-                    _react2.default.createElement(
-                        'p',
-                        { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
-                        'Cancel'
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        { onClick: function onClick() {
-                                return save(type);
-                            }, style: { fontSize: "10px", marginLeft: "5px" } },
-                        'Save'
-                    )
-                )
-            )
-        );
-    }
-
-    function getSequenceActionContent() {
-        return _react2.default.createElement(
-            'div',
-            null,
-            _react2.default.createElement(
-                'p',
-                { className: 'type-header', style: {
-                        marginTop: "-5px"
-                    } },
-                'Type Action'
-            ),
-            _react2.default.createElement(
-                'div',
-                { className: 'types' },
-                _react2.default.createElement(
-                    'p',
-                    { className: 'type', onClick: selectactiontype },
-                    'Call'
-                ),
-                _react2.default.createElement(
-                    'p',
-                    { className: 'type', onClick: selectactiontype },
-                    'Email'
-                ),
-                _react2.default.createElement(
-                    'p',
-                    { className: 'type', onClick: selectactiontype },
-                    'SMS'
-                ),
-                _react2.default.createElement(
-                    'p',
-                    { className: 'type', onClick: selectactiontype },
-                    'Task'
-                )
-            ),
-            _react2.default.createElement(
-                'form',
-                null,
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Select Action ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
-                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Execution Time ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', name: 'time' })
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Field Updates ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  No Field Updates',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Field Updates Required',
-                        _react2.default.createElement('br', null)
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Criteria ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  No Additional Criteria',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Conditions are met',
-                        _react2.default.createElement('br', null)
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { style: { display: "flex", height: "40px", width: "70px" } },
-                    _react2.default.createElement(
-                        'p',
-                        { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
-                        'Cancel'
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        { onClick: function onClick() {
-                                return save(type);
-                            }, style: { fontSize: "10px", marginLeft: "5px" } },
-                        'Save'
-                    )
-                )
-            )
-        );
-    }
-
-    return (
-        /**
-         * having trouble moving this style into a class
-         */
-        _react2.default.createElement(
-            'div',
-            { style: {
-                    position: "fixed",
-                    top: "10%",
-                    left: "50%",
-                    backgroundColor: "white",
-                    height: 350,
-                    width: 275,
-                    borderRadius: "2%",
-                    boxShadow: "0 0 2.5px rgb(206, 206, 206)",
-                    padding: 15,
-                    overflow: "scroll"
-                } },
-            _react2.default.createElement(
-                'p',
-                null,
-                type
-            ),
-            _react2.default.createElement(
-                'div',
-                { className: 'action-types' },
-                modalBody
-            )
-        )
-    );
-};
-
-exports.default = Modal;
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(26);
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(16)(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(15)(false);
-// imports
-
-
-// module
-exports.push([module.i, ".outer-container{\n    position: fixed;\n    top: 10%; \n    left:50%;\n    background-color: white; \n    height: 400px; \n    width: 275px;\n    border-radius: 2%;\n    box-shadow: 0 0 2.5px rgb(206, 206, 206);\n    padding: 15px;\n    overflow: scroll;\n}\n.action-types{\n    display: block;\n}\n.type-header{\n    font-family: logical;\n    font-style: normal;\n    font-size: 7px;\n}\n\n.types{\n    display: flex;\n    flex-wrap: wrap;\n    padding: 2px;\n    font-size: 9px;\n}\n\n.type{\n    font-family: logical;\n    margin-left: 30px;\n    display: flex;\n}\n\np:hover{\n    cursor:pointer;\n    color: greenyellow;\n}\n\n.action-result-panel{\n    background-color: beige;\n    max-height: 200px;\n    overflow:scroll;\n    cursor:pointer;   \n}\n\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9036,9 +9275,9 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-__webpack_require__(28);
+__webpack_require__(32);
 
-var _PlusSign = __webpack_require__(30);
+var _PlusSign = __webpack_require__(34);
 
 var _PlusSign2 = _interopRequireDefault(_PlusSign);
 
@@ -9061,11 +9300,11 @@ var AddAction = function AddAction(_ref) {
 exports.default = AddAction;
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(29);
+var content = __webpack_require__(33);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -9079,17 +9318,17 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(false);
+exports = module.exports = __webpack_require__(17)(false);
 // imports
 
 
@@ -9100,7 +9339,7 @@ exports.push([module.i, ".new-action-connector{\n    height: 12px;\n    width: 1
 
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9147,139 +9386,6 @@ var PlusSign = function PlusSign(_ref) {
 exports.default = PlusSign;
 
 /***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var doApexAction = function doApexAction(method, params, callback) {
-    Visualforce.remoting.Manager.invokeAction(method, params, function (results, event) {
-        if (event.status) {
-            callback(results);
-        } else if (event.type === 'exception') {
-            throw new Error('ERROR: ' + event.message + '// STACKTRACE: ' + event.where);
-        } else {
-            console.error('unknown error in ' + method);
-        }
-    });
-};
-
-var log = function log(message) {
-    console.log(message);
-};
-
-exports.default = { doApexAction: doApexAction, log: log };
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = SequenceCriteria;
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function SequenceCriteria(_ref) {
-    var type = _ref.type,
-        ondone = _ref.ondone;
-
-    return _react2.default.createElement(
-        'p',
-        { onClick: function onClick() {
-                return ondone({ "name": 'criteria', "type": 'criteria' });
-            } },
-        ' Criteria Type: ',
-        type,
-        ' '
-    );
-}
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = SequenceDetail;
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _Modal = __webpack_require__(24);
-
-var _Modal2 = _interopRequireDefault(_Modal);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function SequenceDetail(_ref) {
-    var ondone = _ref.ondone;
-
-    return _react2.default.createElement(_Modal2.default, { type: 'Sequence Detail', saveaction: ondone });
-}
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-__webpack_require__(35);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var ProgressBar = function ProgressBar(_ref) {
-    var boxes = _ref.boxes,
-        action = _ref.action;
-
-    var updatedState = [];
-    // for(let i = 0; i<boxes.length; i++){
-    //     if(i > 0 && i % 2 == 0){
-    //         updatedState.push(<div className="line-connector"></div>);4
-    //     }
-    //     updatedState.push(boxes[i]);
-    //     if( i == (boxes.length -1))
-    //         updatedState.push(getActionInsert());
-    // }
-    // boxes = updatedState;
-
-    return _react2.default.createElement(
-        'div',
-        null,
-        boxes
-    );
-};
-
-exports.default = ProgressBar;
-
-/***/ }),
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9298,7 +9404,7 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
@@ -9308,12 +9414,12 @@ if(false) {}
 /* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(false);
+exports = module.exports = __webpack_require__(17)(false);
 // imports
 
 
 // module
-exports.push([module.i, ".dragger{\n    width: 200px;\n    height: 50px;\n    background-color: rgb(253, 253, 253);\n    cursor: pointer;\n    border-radius: 3%;\n}\n\n", ""]);
+exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.hide{\n    display: hidden;\n}\n.show{\n    display: block;\n}", ""]);
 
 // exports
 

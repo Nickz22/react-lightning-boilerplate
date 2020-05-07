@@ -13,10 +13,10 @@ const doApexAction = (method, params, callback) => {
             }
         }
     );
-};
+}
 
-const log = message => {
+const log = (message) => {
     console.log(message);
 }
 
-export default {doApexAction, log};
+export {doApexAction, log};

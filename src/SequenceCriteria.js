@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Modal from './Modal';
 
 export default function SequenceCriteria({type, ondone}){
-    return <p onClick={() => ondone({"name":'criteria', "type" : 'criteria'})}> Criteria Type: {type} </p>;
+    return <Modal type={type} saveaction={ondone} />;
 }

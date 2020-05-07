@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import './App.css';
 import SequenceActions from './SequenceActions';
 import SequenceCriteria from './SequenceCriteria';
 import SequenceDetail from './SequenceDetail';
 import ProgressBar from './ProgressBar';
 import Box from './Box';
-import {log} from './Util';
 import AddAction from './AddAction';
+import {log} from './Util.js';
+import './App.css';
 
 export default function App(){
     let sequenceSteps = [];
@@ -15,30 +15,40 @@ export default function App(){
         getUpdatedView(step, [])
     ]);
     function getUpdatedView(){
-        console.log('updating view with step ==> '+step);
         let viewMap = {
             0 : <div></div>,
             1 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="sequence-detail"><SequenceDetail ondone={closeModal} /></div>],
-            2 : [<ProgressBar boxes={sequenceSteps}/>,<div id="criteria" className="show"><SequenceCriteria type="entry criteria" ondone={closeModal}/></div>],
-            3 : [<ProgressBar boxes={sequenceSteps}/>,<SequenceCriteria type="exit" ondone={closeModal}/>],
-            4 : [<ProgressBar boxes={sequenceSteps}/>,<SequenceActions ondone={closeModal} />]
+            2 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="criteria-entry" className="show"><SequenceCriteria type="Entry Criteria" ondone={closeModal}/></div>],
+            3 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="criteria-exit"><SequenceCriteria type="Exit Criteria" ondone={closeModal}/></div>],
+            4 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="sequence-action" className="show"><SequenceActions ondone={closeModal} /></div>]
         }
-        return viewMap[step];
+        return viewMap[step > 4 ? 4 : step];
     }
 
     function setUpdatedState(){
+        if(step > 4){
+            document.getElementById("sequence-action").className="show";
+        }
         setView(getUpdatedView());
     }
 
     function closeModal(event){
-        console.log('event type ==> '+event["type"]);
+        log('incoming type ==> '+event["type"]);
         if(event["type"].toLowerCase().includes('detail')){
-            console.log('hide detail');
             document.getElementById("sequence-detail").className="hide";
         }
         if(event["type"].toLowerCase().includes('criteria')){
-            console.log('hide criteria');
-            document.getElementById("criteria").className="hide";
+            if(document.getElementById("criteria-entry"))
+                document.getElementById("criteria-entry").className="hide";
+            if(document.getElementById("criteria-exit"))
+                document.getElementById("criteria-exit").className="hide";
+        }
+        if(event["type"].toLowerCase().includes('exit')){
+            log('exit');
+            document.getElementById("criteria-exit").className="hide";
+        }
+        if(event["type"].toLowerCase().includes('action')){
+            document.getElementById("sequence-action").className="hide";
         }
         showNextStep(event["name"]);
     }
@@ -47,20 +57,24 @@ export default function App(){
             step++;
             document.getElementsByTagName("button")[0].remove();
             setView(getUpdatedView());
-        }else if( label && label.length > 0 && sequenceSteps.length <= 2 ){
-            sequenceSteps.push(<Box label={label} />);
+        }else if( label && label.length > 0 && sequenceSteps.length <= 1 ){
+            sequenceSteps.push(<Box label={label} onclick={bubbleLabel} />);
             sequenceSteps.push(getActionInsert());
             setView(getUpdatedView());
             step++;
-        }else if( sequenceSteps.length > 2 ){
+        }else{
+            let actionInsert = sequenceSteps.pop();
             sequenceSteps.push(<div className="line-connector"></div>);
-            sequenceSteps.push(<Box label={label} />);
-            sequenceSteps.push(getActionInsert());
+            sequenceSteps.push(<Box label={label} onClick={bubbleLabel} />);
+            sequenceSteps.push(actionInsert);
             setView(getUpdatedView());
             step++;
         }
-        console.log('step 2 ==> '+step);
     }   
+    function bubbleLabel(label){
+        log('label received ==> '+label);
+    }
+
     /**
      * @description - returns connector and "+" sign
      */
@@ -72,9 +86,19 @@ export default function App(){
      * @description - adds div for new action in second to last index of state array
      */
     function addAction(){
-        // action();
-        console.log('add');
         setUpdatedState();
+    }
+    /**
+     * @description will need when user saves the sequence
+     * @param {String} label 
+     */
+    async function saveAction(label){
+        let action = {};
+        action["CadenceAction_ID__c"] = document.getElementById('action-results').dataset.selectedrecordid;
+        doApexAction('ReactController.saveAction', JSON.stringify(action), results => {
+            log('saved ==> '+JSON.stringify(results));
+        });
+        addAction(label);
     }
     return (
         <div className="outer-div">
