@@ -7655,7 +7655,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); // had to create two components because dom was not recognizing
-// difference between the two different instances of same component
+//       difference between the two different instances of same component
 
 
 exports.default = App;
@@ -7709,7 +7709,6 @@ function App() {
         setView = _useState2[1];
 
     function getUpdatedView(index) {
-        (0, _Util.log)('set state with step ==> ' + index);
         var viewMap = {
             0: _react2.default.createElement('div', null),
             1: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
@@ -7737,17 +7736,14 @@ function App() {
     }
 
     function setUpdatedState() {
-        (0, _Util.log)('step ' + step);
         if (step > 4) {
             sequenceActions.push(_react2.default.createElement(_SequenceActions2.default, { id: step, ondone: closeModal }));
-            (0, _Util.log)('action length ==> ' + sequenceActions.length);
             document.getElementById("4").className = "show";
         }
         setView(getUpdatedView(step));
     }
 
     function closeModal(event) {
-        (0, _Util.log)('incoming id ==> ' + event["id"]);
         if (event["id"] == 1) document.getElementById("1").className = "hide";
         if (event["id"] == 2) document.getElementById("2").className = "hide";
         if (event["id"] == 3) document.getElementById("3").className = "hide";
@@ -7756,62 +7752,60 @@ function App() {
         }
         addNextStep(event);
     }
+
     function addNextStep(event) {
-        (0, _Util.log)('close modal id ==> ' + event["id"]);
-        if (sequenceSteps.length > 0) {
-            for (var i = 0; i < sequenceSteps.length; i++) {
-                if (sequenceSteps[i]["props"]["id"] == event["id"] && event["id"] != 4) {
-                    (0, _Util.log)('splice && dice');
-                    sequenceSteps.splice(i, 1, _react2.default.createElement(_Box2.default, { id: event["id"], label: event["name"], onclick: showModal }));
-                    setView(getUpdatedView(event["id"]));
-                    return;
-                } else if (event["id"] == 4) {
-                    var container = document.getElementById(4);
-                    for (var x in container) {
-                        if (x == 'childNodes') {
-                            (0, _Util.log)('child length ' + container["childNodes"].length);
-                            // for(let y = 0; y<container["childNodes"].length; y++){
-                        }
-                    }
-                }
-            }
+        if (stepExists(event)) {
+            return;
         }
         if (document.getElementsByTagName("button").length > 0) {
-            step++;
-            document.getElementsByTagName("button")[0].remove();
-            setView(getUpdatedView(step));
+            showSequenceDetailModal();
         } else if (event["name"] && event["name"].length > 0 && sequenceSteps.length <= 1) {
-            (0, _Util.log)('here');
-            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["name"], onclick: showModal, id: step }));
-            sequenceSteps.push(getActionInsert());
-            setView(getUpdatedView(step));
-            step++;
+            addSequenceDetailStep(event);
         } else {
-            (0, _Util.log)('here2');
-            var actionInsert = sequenceSteps.pop();
-            sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector' }));
-            (0, _Util.log)('set step ' + step);
-            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["name"], onclick: showModal, id: step }));
-            sequenceSteps.push(actionInsert);
-            setView(getUpdatedView(step));
-            step++;
+            addStep(event);
         }
     }
+
+    function stepExists(event) {
+        var stepExists = false;
+        for (var i = 0; i < sequenceSteps.length; i++) {
+            if (sequenceSteps[i]["props"]["id"] == event["id"] && event["id"] != 4) {
+                sequenceSteps.splice(i, 1, _react2.default.createElement(_Box2.default, { id: event["id"], label: event["name"], onclick: showModal }));
+                setView(getUpdatedView(event["id"]));
+                stepExists = true;
+            }
+        }
+        return stepExists;
+    }
+    function showSequenceDetailModal() {
+        step++;
+        document.getElementsByTagName("button")[0].remove();
+        setView(getUpdatedView(step));
+    }
+    function addSequenceDetailStep(event) {
+        sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["name"], onclick: showModal, id: step }));
+        sequenceSteps.push(getActionInsert());
+        setView(getUpdatedView(step));
+        step++;
+    }
+    function addStep(event) {
+        var actionInsert = sequenceSteps.pop();
+        sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector' }));
+        sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["name"], onclick: showModal, id: step }));
+        sequenceSteps.push(actionInsert);
+        setView(getUpdatedView(step));
+        step++;
+    }
     function showModal(id) {
-        (0, _Util.log)('show modal id ==> ' + id);
+        /**
+         * need to figure out how i'll show respective sequence action modals
+         *      this approach only shows the modal container div
+         */
         document.getElementById(id >= 4 ? 4 : id).className = "show";
     }
-
-    /**
-     * @description - returns connector and "+" sign
-     */
     function getActionInsert() {
         return _react2.default.createElement(_AddAction2.default, { onaddaction: addAction });
     }
-
-    /**
-     * @description - adds div for new action in second to last index of state array
-     */
     function addAction() {
         setUpdatedState();
     }
@@ -7819,7 +7813,7 @@ function App() {
      * @description will need when user saves the sequence
      * @param {String} label 
      */
-    async function saveAction(label) {
+    function saveAction(label) {
         var action = {};
         action["CadenceAction_ID__c"] = document.getElementById('action-results').dataset.selectedrecordid;
         doApexAction('ReactController.saveAction', JSON.stringify(action), function (results) {
@@ -8351,7 +8345,6 @@ var Modal = function Modal(_ref) {
         }
     }
     function fetchActions(actionName) {
-        (0, _Util.log)('fetch');
         (0, _Util.doApexAction)('ReactController.getActions', actionName, processFetchResults);
     }
     function processFetchResults(results) {
@@ -9502,7 +9495,7 @@ exports = module.exports = __webpack_require__(17)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.hide{\n    display: hidden;\n}\n.show{\n    display: block;\n}\n\n.dummy{\n    background-color: orange;\n}\n.smarty{\n    background-color: orchid;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n    margin-left: 8%;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.hide{\n    display: hidden;\n}\n.show{\n    display: block;\n}\n\n.dummy{\n    background-color: orange;\n}\n.smarty{\n    background-color: orchid;\n}", ""]);
 
 // exports
 

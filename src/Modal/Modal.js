@@ -202,7 +202,6 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
         }
     }
     function fetchActions (actionName){
-        log('fetch');
         doApexAction('ReactController.getActions', actionName, processFetchResults);
     }
     function processFetchResults(results){
