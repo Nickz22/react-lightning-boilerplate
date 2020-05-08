@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import './Modal.css';
-import {log} from './Util.js';
+import {log, doApexAction} from '../Util/Util.js';
 
 const Modal = ({type, select, oninputkeydown, saveaction}) => {
     const [[modalBody, setModalBody]] = useState([
@@ -95,7 +95,7 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
             <form>
                 <div>
                     <label>Select Action <br />
-                        <input type="text" onKeyUp={oninputkeydown} name="action" id="action_input"/>
+                        <input type="text" onKeyUp={getActions} name="action" id="action_input"/>
                         <div id="action-results" selectedrecordid="" className="action-result-panel"></div>
                     </label>
                 </div>
@@ -194,6 +194,43 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
             </form>
             </div>
         );
+    }
+    function getActions(e){
+        if(e.target.value.length > 2){
+            disperseActions();
+            fetchActions(e.target.value);
+        }
+    }
+    function fetchActions (actionName){
+        log('fetch');
+        doApexAction('ReactController.getActions', actionName, processFetchResults);
+    }
+    function processFetchResults(results){
+        let viewResults = document.getElementById("action-results");
+        for(let i = 0 ; i<results.length; i++){
+            let p = document.createElement("P");
+            let textNode = document.createTextNode(results[i]["Name"]);
+            p.appendChild(textNode);
+            p.className='action-name';
+            p.dataset.recordid=results[i]["Id"];
+            p.addEventListener("click", handleActionClick);
+            viewResults.appendChild(p);
+        }
+    }
+    function disperseActions(){
+        let resultsToDisperse = document.querySelectorAll(".action-name");
+        if(resultsToDisperse && resultsToDisperse.length > 0){
+            for( let x = 0; x < resultsToDisperse.length; x++){
+                resultsToDisperse[x].remove();
+            }
+        }
+    }
+    function handleActionClick(e){
+        let input = document.getElementById('action_input');
+        input.value = e.target.textContent;
+        let i = document.getElementById('action-results');
+        i.dataset.selectedrecordid = e.target.dataset.recordid;
+        disperseActions();
     }
     return (
         <div className="outer-container">

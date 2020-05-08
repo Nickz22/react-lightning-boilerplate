@@ -1,6 +1,6 @@
 import React from "react";
 import './AddAction.css';
-import PlusSign from './PlusSign';
+import PlusSign from '../Icons/PlusSign';
 
 const AddAction = ({onaddaction}) => {
     return (

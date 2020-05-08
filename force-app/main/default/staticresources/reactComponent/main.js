@@ -99,13 +99,13 @@ var _reactDom = __webpack_require__(6);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _App = __webpack_require__(12);
+var _SequenceBuilder = __webpack_require__(12);
 
-var _App2 = _interopRequireDefault(_App);
+var _SequenceBuilder2 = _interopRequireDefault(_SequenceBuilder);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_reactDom2.default.render(_react2.default.createElement(_App2.default, null), document.getElementById('body'));
+_reactDom2.default.render(_react2.default.createElement(_SequenceBuilder2.default, null), document.getElementById('body'));
 
 /***/ }),
 /* 1 */
@@ -7699,7 +7699,8 @@ __webpack_require__(36);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
-    var sequenceSteps = [];
+    var sequenceSteps = []; // contains divs for all steps including criteria, sequence name, actions
+    var sequenceActions = [_react2.default.createElement(_SequenceActions2.default, { id: '4', ondone: closeModal })]; // contains only sequence actions
     var step = 0;
 
     var _useState = (0, _react.useState)([getUpdatedView(step)]),
@@ -7729,18 +7730,20 @@ function App() {
             4: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
                 { id: '4', className: 'show' },
-                _react2.default.createElement(_SequenceActions2.default, { id: '4', ondone: closeModal })
+                sequenceActions
             )]
         };
         return viewMap[index > 4 ? 4 : index];
     }
 
     function setUpdatedState() {
+        (0, _Util.log)('step ' + step);
         if (step > 4) {
+            sequenceActions.push(_react2.default.createElement(_SequenceActions2.default, { id: step, ondone: closeModal }));
+            (0, _Util.log)('action length ==> ' + sequenceActions.length);
             document.getElementById("4").className = "show";
-        } else {
-            setView(getUpdatedView(step));
         }
+        setView(getUpdatedView(step));
     }
 
     function closeModal(event) {
@@ -7748,20 +7751,28 @@ function App() {
         if (event["id"] == 1) document.getElementById("1").className = "hide";
         if (event["id"] == 2) document.getElementById("2").className = "hide";
         if (event["id"] == 3) document.getElementById("3").className = "hide";
-        if (event["id"] == 4) {
+        if (event["id"] >= 4) {
             document.getElementById("4").className = "hide";
         }
-        showNextStep(event);
+        addNextStep(event);
     }
-    function showNextStep(event) {
+    function addNextStep(event) {
         (0, _Util.log)('close modal id ==> ' + event["id"]);
         if (sequenceSteps.length > 0) {
             for (var i = 0; i < sequenceSteps.length; i++) {
-                if (sequenceSteps[i]["props"]["id"] == event["id"]) {
+                if (sequenceSteps[i]["props"]["id"] == event["id"] && event["id"] != 4) {
                     (0, _Util.log)('splice && dice');
-                    sequenceSteps.splice(i, 1, _react2.default.createElement(_Box2.default, { id: event["id"], label: 'gotcha!', onclick: showModal }));
+                    sequenceSteps.splice(i, 1, _react2.default.createElement(_Box2.default, { id: event["id"], label: event["name"], onclick: showModal }));
                     setView(getUpdatedView(event["id"]));
                     return;
+                } else if (event["id"] == 4) {
+                    var container = document.getElementById(4);
+                    for (var x in container) {
+                        if (x == 'childNodes') {
+                            (0, _Util.log)('child length ' + container["childNodes"].length);
+                            // for(let y = 0; y<container["childNodes"].length; y++){
+                        }
+                    }
                 }
             }
         }
@@ -7779,6 +7790,7 @@ function App() {
             (0, _Util.log)('here2');
             var actionInsert = sequenceSteps.pop();
             sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector' }));
+            (0, _Util.log)('set step ' + step);
             sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["name"], onclick: showModal, id: step }));
             sequenceSteps.push(actionInsert);
             setView(getUpdatedView(step));
@@ -7787,7 +7799,7 @@ function App() {
     }
     function showModal(id) {
         (0, _Util.log)('show modal id ==> ' + id);
-        document.getElementById(id).className = "show";
+        document.getElementById(id >= 4 ? 4 : id).className = "show";
     }
 
     /**
@@ -7821,7 +7833,7 @@ function App() {
         _react2.default.createElement(
             'button',
             { onClick: function onClick() {
-                    return showNextStep('');
+                    return addNextStep('');
                 }, style: { position: "absolute", left: "25%", top: "25%" } },
             '+ Start Here'
         ),
@@ -7862,7 +7874,7 @@ function SequenceActions(_ref) {
     var id = _ref.id,
         ondone = _ref.ondone;
 
-    var _useState = (0, _react.useState)([_react2.default.createElement(_Modal2.default, { type: 'Add an Action', select: selectActionType, oninputkeydown: getActions, saveaction: bubble })]),
+    var _useState = (0, _react.useState)([_react2.default.createElement(_Modal2.default, { type: 'Add an Action', select: selectActionType, saveaction: bubble })]),
         _useState2 = _slicedToArray(_useState, 2),
         state = _useState2[0],
         setState = _useState2[1];
@@ -7871,46 +7883,6 @@ function SequenceActions(_ref) {
         console.log('bubble');
         event["id"] = id;
         ondone(event);
-    }
-
-    function getActions(e) {
-        if (e.target.value.length > 2) {
-            disperseActions();
-            fetchActions(e.target.value);
-        }
-    }
-    function fetchActions(actionName) {
-        (0, _Util.doApexAction)('ReactController.getActions', actionName, processFetchResults);
-    }
-
-    function handleActionClick(e) {
-        var input = document.getElementById('action_input');
-        input.value = e.target.textContent;
-        var i = document.getElementById('action-results');
-        i.dataset.selectedrecordid = e.target.dataset.recordid;
-        disperseActions();
-    }
-
-    function disperseActions() {
-        var resultsToDisperse = document.querySelectorAll(".action-name");
-        if (resultsToDisperse && resultsToDisperse.length > 0) {
-            for (var x = 0; x < resultsToDisperse.length; x++) {
-                resultsToDisperse[x].remove();
-            }
-        }
-    }
-
-    function processFetchResults(results) {
-        var viewResults = document.getElementById("action-results");
-        for (var i = 0; i < results.length; i++) {
-            var p = document.createElement("P");
-            var textNode = document.createTextNode(results[i]["Name"]);
-            p.appendChild(textNode);
-            p.className = 'action-name';
-            p.dataset.recordid = results[i]["Id"];
-            p.addEventListener("click", handleActionClick);
-            viewResults.appendChild(p);
-        }
     }
 
     function selectActionType(e) {
@@ -8161,7 +8133,7 @@ var Modal = function Modal(_ref) {
                         null,
                         'Select Action ',
                         _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
+                        _react2.default.createElement('input', { type: 'text', onKeyUp: getActions, name: 'action', id: 'action_input' }),
                         _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
                     )
                 ),
@@ -8371,6 +8343,43 @@ var Modal = function Modal(_ref) {
                 )
             )
         );
+    }
+    function getActions(e) {
+        if (e.target.value.length > 2) {
+            disperseActions();
+            fetchActions(e.target.value);
+        }
+    }
+    function fetchActions(actionName) {
+        (0, _Util.log)('fetch');
+        (0, _Util.doApexAction)('ReactController.getActions', actionName, processFetchResults);
+    }
+    function processFetchResults(results) {
+        var viewResults = document.getElementById("action-results");
+        for (var i = 0; i < results.length; i++) {
+            var p = document.createElement("P");
+            var textNode = document.createTextNode(results[i]["Name"]);
+            p.appendChild(textNode);
+            p.className = 'action-name';
+            p.dataset.recordid = results[i]["Id"];
+            p.addEventListener("click", handleActionClick);
+            viewResults.appendChild(p);
+        }
+    }
+    function disperseActions() {
+        var resultsToDisperse = document.querySelectorAll(".action-name");
+        if (resultsToDisperse && resultsToDisperse.length > 0) {
+            for (var x = 0; x < resultsToDisperse.length; x++) {
+                resultsToDisperse[x].remove();
+            }
+        }
+    }
+    function handleActionClick(e) {
+        var input = document.getElementById('action_input');
+        input.value = e.target.textContent;
+        var i = document.getElementById('action-results');
+        i.dataset.selectedrecordid = e.target.dataset.recordid;
+        disperseActions();
     }
     return _react2.default.createElement(
         'div',
