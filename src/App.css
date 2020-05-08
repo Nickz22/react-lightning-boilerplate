@@ -21,3 +21,10 @@
 .show{
     display: block;
 }
+
+.dummy{
+    background-color: orange;
+}
+.smarty{
+    background-color: orchid;
+}

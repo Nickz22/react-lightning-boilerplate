@@ -1,12 +1,13 @@
 import React from "react";
 import './Box.css';
 
-const Box = ({label, handlemousedown, onclick}) => {
+const Box = ({label, handlemousedown, onclick, id}) => {
     console.log('init box with label ==> '+label);
+
     return (
         <div onMouseDown={handlemousedown} 
             className="dragger"
-            onClick={() => onclick(label)}
+            onClick={() => onclick(id)}
         // onMouseUp={handleMouseUp}           will need
         // onMouseOut={handleMouseOut}         these for 
         // onMouseMove={handleScroll}      moving action order

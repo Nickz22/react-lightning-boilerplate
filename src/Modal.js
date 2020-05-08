@@ -29,6 +29,10 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
             let name = document.getElementById('action_input').value;
             saveaction({"name": name, "type" : type});
         }
+        if(type.toLowerCase().includes('exit')){
+            let name = document.getElementById('action_input').value;
+            saveaction({"name": name, "type" : type});
+        }
     }
 
     function getSequenceDetailContent(){

@@ -7654,7 +7654,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); // had to create two components because dom was not recognizing
+// difference between the two different instances of same component
+
 
 exports.default = App;
 
@@ -7666,29 +7668,33 @@ var _SequenceActions = __webpack_require__(13);
 
 var _SequenceActions2 = _interopRequireDefault(_SequenceActions);
 
-var _SequenceCriteria = __webpack_require__(23);
+var _SequenceEntryCriteria = __webpack_require__(23);
 
-var _SequenceCriteria2 = _interopRequireDefault(_SequenceCriteria);
+var _SequenceEntryCriteria2 = _interopRequireDefault(_SequenceEntryCriteria);
 
-var _SequenceDetail = __webpack_require__(24);
+var _SequenceExitCriteria = __webpack_require__(24);
+
+var _SequenceExitCriteria2 = _interopRequireDefault(_SequenceExitCriteria);
+
+var _SequenceDetail = __webpack_require__(25);
 
 var _SequenceDetail2 = _interopRequireDefault(_SequenceDetail);
 
-var _ProgressBar = __webpack_require__(25);
+var _ProgressBar = __webpack_require__(26);
 
 var _ProgressBar2 = _interopRequireDefault(_ProgressBar);
 
-var _Box = __webpack_require__(28);
+var _Box = __webpack_require__(29);
 
 var _Box2 = _interopRequireDefault(_Box);
 
-var _AddAction = __webpack_require__(31);
+var _AddAction = __webpack_require__(32);
 
 var _AddAction2 = _interopRequireDefault(_AddAction);
 
 var _Util = __webpack_require__(20);
 
-__webpack_require__(35);
+__webpack_require__(36);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7696,84 +7702,92 @@ function App() {
     var sequenceSteps = [];
     var step = 0;
 
-    var _useState = (0, _react.useState)([getUpdatedView(step, [])]),
+    var _useState = (0, _react.useState)([getUpdatedView(step)]),
         _useState2 = _slicedToArray(_useState, 2),
         view = _useState2[0],
         setView = _useState2[1];
 
-    function getUpdatedView() {
+    function getUpdatedView(index) {
+        (0, _Util.log)('set state with step ==> ' + index);
         var viewMap = {
             0: _react2.default.createElement('div', null),
             1: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: 'sequence-detail' },
-                _react2.default.createElement(_SequenceDetail2.default, { ondone: closeModal })
+                { id: '1' },
+                _react2.default.createElement(_SequenceDetail2.default, { id: '1', ondone: closeModal })
             )],
             2: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: 'criteria-entry', className: 'show' },
-                _react2.default.createElement(_SequenceCriteria2.default, { type: 'Entry Criteria', ondone: closeModal })
+                { id: '2', className: 'show' },
+                _react2.default.createElement(_SequenceEntryCriteria2.default, { id: '2', type: 'Entry Criteria', ondone: closeModal })
             )],
             3: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: 'criteria-exit' },
-                _react2.default.createElement(_SequenceCriteria2.default, { type: 'Exit Criteria', ondone: closeModal })
+                { id: '3' },
+                _react2.default.createElement(_SequenceExitCriteria2.default, { id: '3', type: 'Exit Criteria', ondone: closeModal })
             )],
             4: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: 'sequence-action', className: 'show' },
-                _react2.default.createElement(_SequenceActions2.default, { ondone: closeModal })
+                { id: '4', className: 'show' },
+                _react2.default.createElement(_SequenceActions2.default, { id: '4', ondone: closeModal })
             )]
         };
-        return viewMap[step > 4 ? 4 : step];
+        return viewMap[index > 4 ? 4 : index];
     }
 
     function setUpdatedState() {
         if (step > 4) {
-            document.getElementById("sequence-action").className = "show";
+            document.getElementById("4").className = "show";
+        } else {
+            setView(getUpdatedView(step));
         }
-        setView(getUpdatedView());
     }
 
     function closeModal(event) {
-        (0, _Util.log)('incoming type ==> ' + event["type"]);
-        if (event["type"].toLowerCase().includes('detail')) {
-            document.getElementById("sequence-detail").className = "hide";
+        (0, _Util.log)('incoming id ==> ' + event["id"]);
+        if (event["id"] == 1) document.getElementById("1").className = "hide";
+        if (event["id"] == 2) document.getElementById("2").className = "hide";
+        if (event["id"] == 3) document.getElementById("3").className = "hide";
+        if (event["id"] == 4) {
+            document.getElementById("4").className = "hide";
         }
-        if (event["type"].toLowerCase().includes('criteria')) {
-            if (document.getElementById("criteria-entry")) document.getElementById("criteria-entry").className = "hide";
-            if (document.getElementById("criteria-exit")) document.getElementById("criteria-exit").className = "hide";
-        }
-        if (event["type"].toLowerCase().includes('exit')) {
-            (0, _Util.log)('exit');
-            document.getElementById("criteria-exit").className = "hide";
-        }
-        if (event["type"].toLowerCase().includes('action')) {
-            document.getElementById("sequence-action").className = "hide";
-        }
-        showNextStep(event["name"]);
+        showNextStep(event);
     }
-    function showNextStep(label) {
+    function showNextStep(event) {
+        (0, _Util.log)('close modal id ==> ' + event["id"]);
+        if (sequenceSteps.length > 0) {
+            for (var i = 0; i < sequenceSteps.length; i++) {
+                if (sequenceSteps[i]["props"]["id"] == event["id"]) {
+                    (0, _Util.log)('splice && dice');
+                    sequenceSteps.splice(i, 1, _react2.default.createElement(_Box2.default, { id: event["id"], label: 'gotcha!', onclick: showModal }));
+                    setView(getUpdatedView(event["id"]));
+                    return;
+                }
+            }
+        }
         if (document.getElementsByTagName("button").length > 0) {
             step++;
             document.getElementsByTagName("button")[0].remove();
-            setView(getUpdatedView());
-        } else if (label && label.length > 0 && sequenceSteps.length <= 1) {
-            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: label, onclick: bubbleLabel }));
+            setView(getUpdatedView(step));
+        } else if (event["name"] && event["name"].length > 0 && sequenceSteps.length <= 1) {
+            (0, _Util.log)('here');
+            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["name"], onclick: showModal, id: step }));
             sequenceSteps.push(getActionInsert());
-            setView(getUpdatedView());
+            setView(getUpdatedView(step));
             step++;
         } else {
+            (0, _Util.log)('here2');
             var actionInsert = sequenceSteps.pop();
             sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector' }));
-            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: label, onClick: bubbleLabel }));
+            sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["name"], onclick: showModal, id: step }));
             sequenceSteps.push(actionInsert);
-            setView(getUpdatedView());
+            setView(getUpdatedView(step));
             step++;
         }
     }
-    function bubbleLabel(label) {
-        (0, _Util.log)('label received ==> ' + label);
+    function showModal(id) {
+        (0, _Util.log)('show modal id ==> ' + id);
+        document.getElementById(id).className = "show";
     }
 
     /**
@@ -7845,12 +7859,19 @@ __webpack_require__(21);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function SequenceActions(_ref) {
-    var ondone = _ref.ondone;
+    var id = _ref.id,
+        ondone = _ref.ondone;
 
-    var _useState = (0, _react.useState)([_react2.default.createElement(_Modal2.default, { type: 'Add an Action', select: selectActionType, oninputkeydown: getActions, saveaction: ondone })]),
+    var _useState = (0, _react.useState)([_react2.default.createElement(_Modal2.default, { type: 'Add an Action', select: selectActionType, oninputkeydown: getActions, saveaction: bubble })]),
         _useState2 = _slicedToArray(_useState, 2),
         state = _useState2[0],
         setState = _useState2[1];
+
+    function bubble(event) {
+        console.log('bubble');
+        event["id"] = id;
+        ondone(event);
+    }
 
     function getActions(e) {
         if (e.target.value.length > 2) {
@@ -7974,6 +7995,10 @@ var Modal = function Modal(_ref) {
         if (type.toLowerCase().includes('entry')) {
             var _name2 = document.getElementById('action_input').value;
             saveaction({ "name": _name2, "type": type });
+        }
+        if (type.toLowerCase().includes('exit')) {
+            var _name3 = document.getElementById('action_input').value;
+            saveaction({ "name": _name3, "type": type });
         }
     }
 
@@ -9059,14 +9084,55 @@ var _Modal2 = _interopRequireDefault(_Modal);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function SequenceCriteria(_ref) {
-    var type = _ref.type,
+    var id = _ref.id,
+        type = _ref.type,
         ondone = _ref.ondone;
 
-    return _react2.default.createElement(_Modal2.default, { type: type, saveaction: ondone });
+    return _react2.default.createElement(_Modal2.default, { type: type, saveaction: bubble });
+    function bubble(event) {
+        console.log('bubble');
+        event["id"] = id;
+        ondone(event);
+    }
 }
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = SequenceCriteria;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Modal = __webpack_require__(14);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function SequenceCriteria(_ref) {
+    var id = _ref.id,
+        type = _ref.type,
+        ondone = _ref.ondone;
+
+    return _react2.default.createElement(_Modal2.default, { type: type, saveaction: bubble });
+    function bubble(event) {
+        console.log('bubble');
+        event["id"] = id;
+        ondone(event);
+    }
+}
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9088,13 +9154,19 @@ var _Modal2 = _interopRequireDefault(_Modal);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function SequenceDetail(_ref) {
-    var ondone = _ref.ondone;
+    var id = _ref.id,
+        ondone = _ref.ondone;
 
-    return _react2.default.createElement(_Modal2.default, { type: 'Sequence Detail', saveaction: ondone });
+    return _react2.default.createElement(_Modal2.default, { type: 'Sequence Detail', saveaction: bubble });
+    function bubble(event) {
+        console.log('bubble');
+        event["id"] = id;
+        ondone(event);
+    }
 }
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9108,7 +9180,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-__webpack_require__(26);
+__webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9137,11 +9209,11 @@ var ProgressBar = function ProgressBar(_ref) {
 exports.default = ProgressBar;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(27);
+var content = __webpack_require__(28);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -9162,7 +9234,7 @@ if(content.locals) module.exports = content.locals;
 if(false) {}
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(17)(false);
@@ -9176,7 +9248,7 @@ exports.push([module.i, ".dragger{\n    width: 200px;\n    height: 50px;\n    ba
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9190,22 +9262,24 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-__webpack_require__(29);
+__webpack_require__(30);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Box = function Box(_ref) {
     var label = _ref.label,
         handlemousedown = _ref.handlemousedown,
-        onclick = _ref.onclick;
+        onclick = _ref.onclick,
+        id = _ref.id;
 
     console.log('init box with label ==> ' + label);
+
     return _react2.default.createElement(
         'div',
         { onMouseDown: handlemousedown,
             className: 'dragger',
             onClick: function onClick() {
-                return onclick(label);
+                return onclick(id);
             }
             // onMouseUp={handleMouseUp}           will need
             // onMouseOut={handleMouseOut}         these for 
@@ -9222,11 +9296,11 @@ var Box = function Box(_ref) {
 exports.default = Box;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(30);
+var content = __webpack_require__(31);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -9247,7 +9321,7 @@ if(content.locals) module.exports = content.locals;
 if(false) {}
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(17)(false);
@@ -9261,7 +9335,7 @@ exports.push([module.i, ".dragger{\n    width: 200px;\n    height: 50px;\n    ba
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9275,9 +9349,9 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-__webpack_require__(32);
+__webpack_require__(33);
 
-var _PlusSign = __webpack_require__(34);
+var _PlusSign = __webpack_require__(35);
 
 var _PlusSign2 = _interopRequireDefault(_PlusSign);
 
@@ -9300,11 +9374,11 @@ var AddAction = function AddAction(_ref) {
 exports.default = AddAction;
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(33);
+var content = __webpack_require__(34);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -9325,7 +9399,7 @@ if(content.locals) module.exports = content.locals;
 if(false) {}
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(17)(false);
@@ -9339,7 +9413,7 @@ exports.push([module.i, ".new-action-connector{\n    height: 12px;\n    width: 1
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9386,11 +9460,11 @@ var PlusSign = function PlusSign(_ref) {
 exports.default = PlusSign;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(36);
+var content = __webpack_require__(37);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -9411,7 +9485,7 @@ if(content.locals) module.exports = content.locals;
 if(false) {}
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(17)(false);
@@ -9419,7 +9493,7 @@ exports = module.exports = __webpack_require__(17)(false);
 
 
 // module
-exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.hide{\n    display: hidden;\n}\n.show{\n    display: block;\n}", ""]);
+exports.push([module.i, ".outer-div{\n    width: 800px;\n    height: 500px;\n    background-color:  rgb(235, 235, 235);\n    display:block;\n    padding: 10% 10% ;\n}\n\n.line-connector{\n    height: 12px;\n    width: 1px;\n    background-color: rgb(170, 170, 170);\n    z-index: 10;\n    position: relative;\n    left: 100px;\n}\n\n.hide{\n    display: hidden;\n}\n.show{\n    display: block;\n}\n\n.dummy{\n    background-color: orange;\n}\n.smarty{\n    background-color: orchid;\n}", ""]);
 
 // exports
 

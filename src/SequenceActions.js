@@ -3,12 +3,18 @@ import Modal from './Modal';
 import {doApexAction, log} from './Util.js';
 import './SequenceActions.css';
 
-export default function SequenceActions({ondone}){
+export default function SequenceActions({id, ondone}){
     const [state, setState] = useState(
         [
-            <Modal type="Add an Action" select={selectActionType} oninputkeydown={getActions} saveaction={ondone}/>
+            <Modal type="Add an Action" select={selectActionType} oninputkeydown={getActions} saveaction={bubble}/>
         ]
     );
+
+    function bubble(event){
+        console.log('bubble');
+        event["id"] = id;
+        ondone(event);
+    }
 
     function getActions(e){
         if(e.target.value.length > 2){

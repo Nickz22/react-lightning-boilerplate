@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SequenceActions from './SequenceActions';
-import SequenceCriteria from './SequenceCriteria';
+import SequenceEntryCriteria from './SequenceEntryCriteria'; // had to create two components because dom was not recognizing
+import SequenceExitCriteria from './SequenceExitCriteria' // difference between the two different instances of same component
 import SequenceDetail from './SequenceDetail';
 import ProgressBar from './ProgressBar';
 import Box from './Box';
@@ -12,67 +13,76 @@ export default function App(){
     let sequenceSteps = [];
     let step = 0;
     const [view, setView] = useState([
-        getUpdatedView(step, [])
+        getUpdatedView(step)
     ]);
-    function getUpdatedView(){
+    function getUpdatedView(index){
+        log('set state with step ==> '+index);
         let viewMap = {
             0 : <div></div>,
-            1 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="sequence-detail"><SequenceDetail ondone={closeModal} /></div>],
-            2 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="criteria-entry" className="show"><SequenceCriteria type="Entry Criteria" ondone={closeModal}/></div>],
-            3 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="criteria-exit"><SequenceCriteria type="Exit Criteria" ondone={closeModal}/></div>],
-            4 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="sequence-action" className="show"><SequenceActions ondone={closeModal} /></div>]
+            1 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="1"><SequenceDetail id="1" ondone={closeModal} /></div>],
+            2 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="2" className="show"><SequenceEntryCriteria id="2" type="Entry Criteria" ondone={closeModal}/></div>],
+            3 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="3"><SequenceExitCriteria id="3" type="Exit Criteria" ondone={closeModal}/></div>],
+            4 : [<ProgressBar boxes={sequenceSteps} action={setUpdatedState}/>,<div id="4" className="show"><SequenceActions id="4" ondone={closeModal} /></div>]
         }
-        return viewMap[step > 4 ? 4 : step];
+        return viewMap[index > 4 ? 4 : index];
     }
 
     function setUpdatedState(){
         if(step > 4){
-            document.getElementById("sequence-action").className="show";
+            document.getElementById("4").className="show";
+        }else{
+            setView(getUpdatedView(step));
         }
-        setView(getUpdatedView());
     }
 
     function closeModal(event){
-        log('incoming type ==> '+event["type"]);
-        if(event["type"].toLowerCase().includes('detail')){
-            document.getElementById("sequence-detail").className="hide";
+        log('incoming id ==> '+event["id"]);
+        if(event["id"] == 1)
+            document.getElementById("1").className="hide";
+        if(event["id"] == 2)
+            document.getElementById("2").className="hide";
+        if(event["id"] == 3)
+            document.getElementById("3").className="hide";
+        if(event["id"] == 4){
+            document.getElementById("4").className="hide";
         }
-        if(event["type"].toLowerCase().includes('criteria')){
-            if(document.getElementById("criteria-entry"))
-                document.getElementById("criteria-entry").className="hide";
-            if(document.getElementById("criteria-exit"))
-                document.getElementById("criteria-exit").className="hide";
-        }
-        if(event["type"].toLowerCase().includes('exit')){
-            log('exit');
-            document.getElementById("criteria-exit").className="hide";
-        }
-        if(event["type"].toLowerCase().includes('action')){
-            document.getElementById("sequence-action").className="hide";
-        }
-        showNextStep(event["name"]);
+        showNextStep(event);
     }
-    function showNextStep(label){
+    function showNextStep(event){
+        log('close modal id ==> '+event["id"]);
+        if( sequenceSteps.length > 0 ){
+            for(let i = 0; i<sequenceSteps.length;i++){
+                if(sequenceSteps[i]["props"]["id"] == event["id"]){
+                    log('splice && dice');
+                    sequenceSteps.splice(i,1,<Box id={event["id"]} label="gotcha!" onclick={showModal} />);
+                    setView(getUpdatedView(event["id"]));
+                    return;
+                }
+            }
+        }
         if( document.getElementsByTagName("button").length > 0 ){
             step++;
             document.getElementsByTagName("button")[0].remove();
-            setView(getUpdatedView());
-        }else if( label && label.length > 0 && sequenceSteps.length <= 1 ){
-            sequenceSteps.push(<Box label={label} onclick={bubbleLabel} />);
+            setView(getUpdatedView(step));
+        }else if( event["name"] && event["name"].length > 0 && sequenceSteps.length <= 1 ){
+            log('here');
+            sequenceSteps.push(<Box label={event["name"]} onclick={showModal} id={step} />);
             sequenceSteps.push(getActionInsert());
-            setView(getUpdatedView());
+            setView(getUpdatedView(step));
             step++;
         }else{
+            log('here2');
             let actionInsert = sequenceSteps.pop();
             sequenceSteps.push(<div className="line-connector"></div>);
-            sequenceSteps.push(<Box label={label} onClick={bubbleLabel} />);
+            sequenceSteps.push(<Box label={event["name"]} onclick={showModal} id={step} />);
             sequenceSteps.push(actionInsert);
-            setView(getUpdatedView());
+            setView(getUpdatedView(step));
             step++;
         }
     }   
-    function bubbleLabel(label){
-        log('label received ==> '+label);
+    function showModal(id){
+        log('show modal id ==> '+id);
+        document.getElementById(id).className = "show";
     }
 
     /**
