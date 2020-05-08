@@ -1,9 +1,9 @@
 import React from "react";
 import './Box.css';
+import { log } from "../Util/Util";
 
 const Box = ({label, handlemousedown, onclick, id}) => {
-    console.log('init box with label ==> '+label);
-
+    log('box id ==> '+id);
     return (
         <div onMouseDown={handlemousedown} 
             className="dragger"

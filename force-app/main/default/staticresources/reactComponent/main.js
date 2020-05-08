@@ -7700,7 +7700,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function App() {
     var sequenceSteps = []; // contains divs for all steps including criteria, sequence name, actions
-    var sequenceActions = [_react2.default.createElement(_SequenceActions2.default, { id: '4', ondone: closeModal })]; // contains only sequence actions
+    var sequenceActionMap = {};
     var step = 0;
 
     var _useState = (0, _react.useState)([getUpdatedView(step)]),
@@ -7713,68 +7713,102 @@ function App() {
             0: _react2.default.createElement('div', null),
             1: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: '1' },
+                { id: 'modal-container' },
                 _react2.default.createElement(_SequenceDetail2.default, { id: '1', ondone: closeModal })
             )],
             2: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: '2', className: 'show' },
+                { id: 'modal-container', className: 'show' },
                 _react2.default.createElement(_SequenceEntryCriteria2.default, { id: '2', type: 'Entry Criteria', ondone: closeModal })
             )],
             3: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: '3' },
+                { id: 'modal-container' },
                 _react2.default.createElement(_SequenceExitCriteria2.default, { id: '3', type: 'Exit Criteria', ondone: closeModal })
             )],
             4: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps, action: setUpdatedState }), _react2.default.createElement(
                 'div',
-                { id: '4', className: 'show' },
-                sequenceActions
+                { id: 'modal-container', className: 'show' },
+                sequenceActionMap[index - 4]
             )]
         };
         return viewMap[index > 4 ? 4 : index];
     }
 
     function setUpdatedState() {
-        if (step > 4) {
-            sequenceActions.push(_react2.default.createElement(_SequenceActions2.default, { id: step, ondone: closeModal }));
-            document.getElementById("4").className = "show";
+        if (step >= 4) {
+            sequenceActionMap[step - 4] = _react2.default.createElement(_SequenceActions2.default, { id: step, ondone: closeActionModal });
+            document.getElementById("modal-container").className = "show";
         }
         setView(getUpdatedView(step));
     }
 
-    function closeModal(event) {
-        if (event["id"] == 1) document.getElementById("1").className = "hide";
-        if (event["id"] == 2) document.getElementById("2").className = "hide";
-        if (event["id"] == 3) document.getElementById("3").className = "hide";
-        if (event["id"] >= 4) {
-            document.getElementById("4").className = "hide";
+    function closeActionModal(event) {
+        (0, _Util.log)('incoming action id ==> ' + event["id"]);
+        if (sequenceActionMap[event["id"] - 4]) {
+            setBoxState(event);
         }
-        addNextStep(event);
+    }
+
+    function setBoxState(event) {
+        (0, _Util.log)('steps length ==> ' + sequenceSteps.length);
+        sequenceActionMap[event["id"] - 4] = _react2.default.createElement(_SequenceActions2.default, { id: step, ondone: closeActionModal });
+        var actionInsert = sequenceSteps.pop();
+        sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector' }));
+        sequenceSteps.push(_react2.default.createElement(_Box2.default, { id: event["id"], label: event["name"], onclick: showModal }));
+        sequenceSteps.push(actionInsert);
+        document.getElementById("modal-container").className = "hide";
+        setView(getUpdatedView(event["id"]));
+        // for(let i = 0; i<sequenceSteps.length;i++){
+        //     if( sequenceSteps[i]["props"]["id"] == event["id"] ){
+        //         log('here');
+        //         sequenceSteps.splice((event["id"] - 1),1,<Box id={event["id"]} label={event["name"]} onclick={showModal} />);
+        //         setView(getUpdatedView((event["id"] - 1)));
+        //         break;
+        //     }
+        // }
+    }
+
+    function closeModal(event) {
+        document.getElementById("modal-container").className = "hide";
+        if (!stepExists(event)) {
+            addNextStep(event);
+        }
     }
 
     function addNextStep(event) {
-        if (stepExists(event)) {
-            return;
-        }
-        if (document.getElementsByTagName("button").length > 0) {
-            showSequenceDetailModal();
-        } else if (event["name"] && event["name"].length > 0 && sequenceSteps.length <= 1) {
-            addSequenceDetailStep(event);
-        } else {
-            addStep(event);
-        }
+        if (document.getElementsByTagName("button").length > 0) showSequenceDetailModal();else if (sequenceSteps.length <= 1) addSequenceDetailStep(event);else addStep(event);
     }
 
     function stepExists(event) {
+        (0, _Util.log)('incoming name ==> ' + event["name"]);
+        (0, _Util.log)('incoming id ==> ' + event["id"]);
         var stepExists = false;
         for (var i = 0; i < sequenceSteps.length; i++) {
-            if (sequenceSteps[i]["props"]["id"] == event["id"] && event["id"] != 4) {
+            if (sequenceSteps[i]["props"]["id"] == event["id"] && event["id"] < 4) {
                 sequenceSteps.splice(i, 1, _react2.default.createElement(_Box2.default, { id: event["id"], label: event["name"], onclick: showModal }));
                 setView(getUpdatedView(event["id"]));
                 stepExists = true;
+                break;
+            } else if (event["id"] >= 4) {
+                // look through sequence actions
+                if (sequenceActionMap[event["id"] - 4]) {
+                    (0, _Util.log)('action exists');
+                    sequenceSteps.splice(3, 1, _react2.default.createElement(_Box2.default, { id: event["id"], label: event["name"], onclick: showModal }));
+                    setView(getUpdatedView(event["id"]));
+                    document.getElementById("modal-container").className = "hide";
+                    stepExists = true;
+                    break;
+                } else {
+                    // log('action does not exist, creating new');
+                    // sequenceActionMap[event["id"] - 4] = <SequenceActions id="4" ondone={closeModal} />;
+                    // setView(getUpdatedView(event["id"]));
+                    // document.getElementById("modal-container").className = "hide";
+                    // break;
+                }
             }
         }
+        (0, _Util.log)('exists ? ' + stepExists);
         return stepExists;
     }
     function showSequenceDetailModal() {
@@ -7797,11 +7831,8 @@ function App() {
         step++;
     }
     function showModal(id) {
-        /**
-         * need to figure out how i'll show respective sequence action modals
-         *      this approach only shows the modal container div
-         */
-        document.getElementById(id >= 4 ? 4 : id).className = "show";
+        document.getElementById("modal-container").className = "show";
+        setView(getUpdatedView(id));
     }
     function getActionInsert() {
         return _react2.default.createElement(_AddAction2.default, { onaddaction: addAction });
@@ -9266,6 +9297,8 @@ var _react2 = _interopRequireDefault(_react);
 
 __webpack_require__(30);
 
+var _Util = __webpack_require__(20);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Box = function Box(_ref) {
@@ -9274,22 +9307,21 @@ var Box = function Box(_ref) {
         onclick = _ref.onclick,
         id = _ref.id;
 
-    console.log('init box with label ==> ' + label);
-
+    (0, _Util.log)('box id ==> ' + id);
     return _react2.default.createElement(
-        'div',
+        "div",
         { onMouseDown: handlemousedown,
-            className: 'dragger',
+            className: "dragger",
             onClick: function onClick() {
                 return onclick(id);
             }
             // onMouseUp={handleMouseUp}           will need
             // onMouseOut={handleMouseOut}         these for 
             // onMouseMove={handleScroll}      moving action order
-            , id: 'dont-drag' },
+            , id: "dont-drag" },
         _react2.default.createElement(
-            'p',
-            { className: 'action-label' },
+            "p",
+            { className: "action-label" },
             label
         )
     );
