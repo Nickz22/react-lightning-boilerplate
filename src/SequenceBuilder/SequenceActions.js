@@ -1,48 +1,52 @@
 import React, { useState } from 'react';
-import Modal from '../Modal/Modal';
+import ActionModal from '../ActionModal';
 import {doApexAction, log} from '../Util/Util.js';
 import './SequenceActions.css';
 
-export default function SequenceActions({id, ondone}){
-    const [state, setState] = useState(
+export default function SequenceActions({viewMap}){
+    log('SequenceAction view map ==> '+JSON.stringify(viewMap));
+    const [states, setState] = useState(
         [
-            <Modal type="Add an Action" select={selectActionType} saveaction={bubble}/>
+            <ActionModal viewMap={viewMap} />
         ]
     );
 
-    function bubble(event){
-        console.log('bubble');
-        event["id"] = id;
-        ondone(event);
-    }
-
-    function selectActionType(e){
-        log('selected action type ==> '+e.target.textContent);
-    }
-
-    function handleMouseDown(){
-        click = true;
-    }
-
-    function handleMouseUp(){
-        click = false;
-    }
-
-        function handleMouseOut(){
-        click = false;
-    }
-
-    function handleScroll(e){
-        if(click){
-            e.target.setAttribute('style','top:'+(e.clientY - 40)+'px; left:'+(e.clientX - 40)+'px;');
-        }
-    }
-
-    
-
     return (
         <div>
-            {state}
+            {states}
         </div>
     );
+
+    // function getModal(){
+    //     // log('returning modal')    ;
+    //     if(states!=undefined && states){
+    //         this.refs.child.setName();
+    //     }
+    // }
+
+    // function bubble(event){
+    //     viewMap["saveaction"](event);
+    // }
+
+    // function selectActionType(e){
+    //     log('selected action type ==> '+e.target.textContent);
+    // }
+
+    // function handleMouseDown(){
+    //     click = true;
+    // }
+
+    // function handleMouseUp(){
+    //     click = false;
+    // }
+
+    //     function handleMouseOut(){
+    //     click = false;
+    // }
+
+    // function handleScroll(e){
+    //     if(click){
+    //         e.target.setAttribute('style','top:'+(e.clientY - 40)+'px; left:'+(e.clientX - 40)+'px;');
+    //     }
+    // }
 }
