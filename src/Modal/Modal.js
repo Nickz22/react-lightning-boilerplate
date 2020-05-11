@@ -1,22 +1,22 @@
 import React, {useState} from "react";
 import './Modal.css';
-import {log, doApexAction} from '../Util/Util.js';
-
-const Modal = ({type, select, oninputkeydown, saveaction}) => {
+import { log } from "../Util/Util";
+const Modal = ({viewMap}) => {
     const [[modalBody, setModalBody]] = useState([
         getContent()
     ])
     function getContent(){
-        if(type.toLowerCase().includes('detail'))
+        if(viewMap["info"]["type"].toLowerCase().includes('detail'))
             return getSequenceDetailContent();
-        if(type.toLowerCase().includes('entry'))
+        if(viewMap["info"]["type"].toLowerCase().includes('entry'))
             return getEntryCriteriaContent();
-        if(type.toLowerCase().includes('exit'))
+        if(viewMap["info"]["type"].toLowerCase().includes('exit'))
             return getExitCriteriaContent();
     }
     function save(type){
-        let name = document.getElementById('action_input').value;
-        saveaction({"info":{"name": name, "type" : type}});
+        let input = document.getElementById('action_input');
+        let name = input.value;
+        viewMap["saveaction"]({"info":{"name": name, "type" : viewMap["info"]["type"], "id":viewMap["info"]["id"], "element":input}});
     }
 
     function getSequenceDetailContent(){
@@ -28,16 +28,16 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
             <form>
                 <div>
                     <label>Sequence Name<br />
-                        <input type="text" onKeyUp={oninputkeydown} name="action" id="action_input"/>
+                        <input type="text" name="action" id="action_input"/>
                         <div id="action-results" selectedrecordid="" className="action-result-panel"></div>
                     </label>
                 </div>
                 <div className="types">
-                    <p className="type" onClick={select}>IMG</p>
-                    <p className="type" onClick={select}>IMG</p>
-                    <p className="type" onClick={select}>IMG</p>
-                    <p className="type" onClick={select}>IMG</p>
-                    <p className="type" onClick={select}>IMG</p>
+                    <p className="type" onClick={viewMap["onTypeSelect"]}>IMG</p>
+                    <p className="type" onClick={viewMap["onTypeSelect"]}>IMG</p>
+                    <p className="type" onClick={viewMap["onTypeSelect"]}>IMG</p>
+                    <p className="type" onClick={viewMap["onTypeSelect"]}>IMG</p>
+                    <p className="type" onClick={viewMap["onTypeSelect"]}>IMG</p>
                 </div>
                 <div>
                     <label>Activation Type <br />
@@ -57,7 +57,7 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
                     {/* <button style={{border: "none", borderRadius: "2%"}}><p style={{color: "grey", fontSize: "10px"}}>Cancel</p></button> */}
                     <p style={{color: "grey", marginLeft:"5px", fontSize: "10px"}}>Cancel</p>
                     {/* <button onClick={saveaction} style={{backgroundColor: "lightgreen",borderRadius: "2%"}}><p style={{fontSize: "10px"}}>Save</p></button> */}
-                    <p onClick={() => save(type)} style={{fontSize: "10px",marginLeft:"5px"}}>Save</p>
+                    <p onClick={() => save(viewMap["info"]["type"])} style={{fontSize: "10px",marginLeft:"5px"}}>Save</p>
                 </div>
             </form>
             </div>
@@ -73,7 +73,7 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
             <form>
                 <div>
                     <label>Select Field <br />
-                        <input type="text" onKeyUp={oninputkeydown} name="action" id="action_input"/>
+                        <input type="text" name="action" id="action_input"/>
                         <div id="action-results" selectedrecordid="" className="action-result-panel"></div>
                     </label>
                 </div>
@@ -92,7 +92,7 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
                     {/* <button style={{border: "none", borderRadius: "2%"}}><p style={{color: "grey", fontSize: "10px"}}>Cancel</p></button> */}
                     <p style={{color: "grey", marginLeft:"5px", fontSize: "10px"}}>Cancel</p>
                     {/* <button onClick={saveaction} style={{backgroundColor: "lightgreen",borderRadius: "2%"}}><p style={{fontSize: "10px"}}>Save</p></button> */}
-                    <p onClick={() => save(type)} style={{fontSize: "10px",marginLeft:"5px"}}>Save</p>
+                    <p onClick={() => save(viewMap["info"]["type"])} style={{fontSize: "10px",marginLeft:"5px"}}>Save</p>
                 </div>
             </form>
             </div>
@@ -107,7 +107,7 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
             <form>
                 <div>
                     <label>Select Field <br />
-                        <input type="text" onKeyUp={oninputkeydown} name="action" id="action_input"/>
+                        <input type="text" name="action" id="action_input"/>
                         <div id="action-results" selectedrecordid="" className="action-result-panel"></div>
                     </label>
                 </div>
@@ -126,7 +126,7 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
                     {/* <button style={{border: "none", borderRadius: "2%"}}><p style={{color: "grey", fontSize: "10px"}}>Cancel</p></button> */}
                     <p style={{color: "grey", marginLeft:"5px", fontSize: "10px"}}>Cancel</p>
                     {/* <button onClick={saveaction} style={{backgroundColor: "lightgreen",borderRadius: "2%"}}><p style={{fontSize: "10px"}}>Save</p></button> */}
-                    <p onClick={() => save(type)} style={{fontSize: "10px",marginLeft:"5px"}}>Save</p>
+                    <p onClick={() => save(viewMap["info"]["type"])} style={{fontSize: "10px",marginLeft:"5px"}}>Save</p>
                 </div>
             </form>
             </div>
@@ -135,7 +135,7 @@ const Modal = ({type, select, oninputkeydown, saveaction}) => {
     
     return (
         <div className="outer-container">
-            <p>{type}</p>
+            <p>{viewMap["info"]["type"]}</p>
             <div className="action-types">
                 {modalBody}
             </div>

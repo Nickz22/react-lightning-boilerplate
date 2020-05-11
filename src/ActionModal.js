@@ -3,7 +3,6 @@ import './ActionModal.css';
 import {log, doApexAction} from './Util/Util.js';
 
 const ActionModal = ({viewMap}) => {
-    log('ActionModal view map ==> '+JSON.stringify(viewMap));
     function fetchActions (actionName){
         doApexAction('ReactController.getActions', actionName, processFetchResults);
     }
@@ -41,7 +40,6 @@ const ActionModal = ({viewMap}) => {
         disperseActions();
     }
     function save(){
-        log('view map IN action modal ==> '+viewMap["info"]["id"]);
         let input = document.getElementById('action_input');
         let saveaction = viewMap["saveaction"];
         saveaction({
@@ -60,7 +58,6 @@ const ActionModal = ({viewMap}) => {
 
     function getContent(){
         let inputValue = viewMap["info"]["name"] ? viewMap["info"]["name"] : 'fuggit';
-        log('inputValue '+inputValue);
         if(viewMap == undefined || !viewMap)
             viewMap = {"info": {"name" : ""}};
         return (

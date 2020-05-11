@@ -7654,9 +7654,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); // had to create two components because dom was not recognizing
-//       difference between the two different instances of same component
-
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 exports.default = App;
 
@@ -7664,9 +7662,9 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _SequenceActions = __webpack_require__(13);
+var _SequenceAction = __webpack_require__(13);
 
-var _SequenceActions2 = _interopRequireDefault(_SequenceActions);
+var _SequenceAction2 = _interopRequireDefault(_SequenceAction);
 
 var _SequenceEntryCriteria = __webpack_require__(23);
 
@@ -7701,160 +7699,198 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function App() {
-    var sequenceSteps = []; // contains divs for all steps including criteria, sequence name, actions
-    var sequenceActionContent = {
-        "saveaction": closeActionModal,
+    var sequenceSteps = []; // contains divs for all steps including sequence detail, criteria, actions and connectors
+    var actionModalContent = {
+        "saveaction": closeModal,
         "info": {
             "name": "",
             "id": ""
         }
     };
+    var modalContent = {
+        "saveaction": closeModal,
+        "onTypeSelect": function onTypeSelect(type) {
+            (0, _Util.log)('got type: ' + type);
+        },
+        "info": {
+            "name": "",
+            "id": "",
+            "type": "Sequence Detail"
+        }
+    };
     var step = 0;
-    var input = void 0;
+    var actionInput = void 0;
+    var nonActionInput = void 0;
 
     var _useState = (0, _react.useState)([getUpdatedView(step)]),
         _useState2 = _slicedToArray(_useState, 2),
         view = _useState2[0],
         setView = _useState2[1];
+    /**
+     * @description uses key value pairs to retrieve the requested rerender view
+     * @param {Integer} index - key of view to rerender
+     */
+
 
     function getUpdatedView(index) {
-        (0, _Util.log)('update view index ' + index);
         var viewMap = {
             0: _react2.default.createElement('div', null),
             1: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps }), _react2.default.createElement(
                 'div',
                 { id: 'modal-container' },
-                _react2.default.createElement(_SequenceDetail2.default, { id: '1', ondone: closeModal })
+                _react2.default.createElement(_SequenceDetail2.default, { viewMap: modalContent })
             )],
             2: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps }), _react2.default.createElement(
                 'div',
                 { id: 'modal-container', className: 'show' },
-                _react2.default.createElement(_SequenceEntryCriteria2.default, { id: '2', type: 'Entry Criteria', ondone: closeModal })
+                _react2.default.createElement(_SequenceEntryCriteria2.default, { viewMap: modalContent })
             )],
             3: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps }), _react2.default.createElement(
                 'div',
                 { id: 'modal-container' },
-                _react2.default.createElement(_SequenceExitCriteria2.default, { id: '3', type: 'Exit Criteria', ondone: closeModal })
+                _react2.default.createElement(_SequenceExitCriteria2.default, { viewMap: modalContent })
             )],
             4: [_react2.default.createElement(_ProgressBar2.default, { boxes: sequenceSteps }), _react2.default.createElement(
                 'div',
                 { id: 'modal-container', className: 'show' },
-                _react2.default.createElement(_SequenceActions2.default, { viewMap: sequenceActionContent })
+                _react2.default.createElement(_SequenceAction2.default, { viewMap: actionModalContent })
             )]
         };
         return viewMap[index > 4 ? 4 : index];
     }
-    function setUpdatedState() {
-        if (step >= 4) {
-            document.getElementById("modal-container").className = "show";
-        }
-        setView(getUpdatedView(step));
-    }
-    function setActionState(id, name) {
-        sequenceActionContent["info"] = {
-            "id": id,
-            "name": name
-        };
-    }
 
-    function closeActionModal(event) {
-        input = event["info"]["element"];
-        document.getElementById("modal-container").className = "hide";
-        if (!stepExists(event)) {
-            setBoxState(event);
-        }
-    }
-
-    function setBoxState(event) {
-        var actionInsert = sequenceSteps.pop();
-        sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector', id: event["info"]["id"] - .5 }));
-        sequenceSteps.push(_react2.default.createElement(_Box2.default, { id: event["info"]["id"], label: event["info"]["name"], onclick: showModal }));
-        sequenceSteps.push(actionInsert);
-        document.getElementById("modal-container").className = "hide";
-        setView(getUpdatedView(event["info"]["id"]));
-        step++;
-    }
-
+    /**
+     * @description handles modal saved state to either update an existing step or add a new step
+     * @param {Object} event - bubbled from modal which was saved
+     */
     function closeModal(event) {
+        if (event["info"] && event["info"]["element"]) {
+            if (event["info"]["id"] < 4 && !nonActionInput) {
+                nonActionInput = event["info"]["element"];
+            } else {
+                actionInput = event["info"]["element"];
+            }
+        }
         document.getElementById("modal-container").className = "hide";
         if (!stepExists(event)) {
             addNextStep(event);
         }
     }
-
+    /**
+     * 
+     * @param {Object} event adds new step to bottom of step list, before add action div
+     */
     function addNextStep(event) {
-        if (document.getElementsByTagName("button").length > 0) showSequenceDetailModal();else if (sequenceSteps.length <= 1) addSequenceDetailStep(event);else addStep(event);
+        if (document.getElementsByTagName("button").length > 0) {
+            // handle "Start Here" click
+            showSequenceDetailModal();
+        } else if (sequenceSteps.length <= 1) {
+            // init ProgressBar with first step and add action div
+            addSequenceDetailStep(event);
+        } else {
+            addStep(event);
+        }
     }
-
+    /**
+     * @description adds new non-sequence detail step to bottom of step list, before add action div
+     * @param {Object} event - bubbled from modal click
+     */
+    function addStep(event) {
+        var id = parseInt(event["info"]["id"]);
+        var actionInsert = sequenceSteps.pop();
+        sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector', id: id - .5 }));
+        sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["info"]["name"], onclick: showModal, id: id }));
+        sequenceSteps.push(actionInsert);
+        setView(getUpdatedView(id));
+        step++;
+    }
+    /**
+     * @description checks if bubbled state is associated with existing step or new step
+     * @param {Object} event - bubbled from modal click
+     */
     function stepExists(event) {
-        (0, _Util.log)('incoming event id ==> ' + event["info"]["id"]);
         var id = parseInt(event["info"]["id"]);
         var stepExists = false;
-        var boxMap = new Map(sequenceSteps.map(function (x) {
-            return [x["props"]["id"], x];
-        }));
-        (0, _Util.log)('unordered keys : ' + JSON.stringify(Array.from(boxMap.keys())));
+        var boxMap = (0, _Util.getStepMap)(sequenceSteps);
         if (boxMap.has(id)) {
-            boxMap.delete(id);
             boxMap.delete(1000); // remove add action div
-            (0, _Util.log)('splicing');
-            (0, _Util.log)('setting key value ' + id);
             boxMap.set(id, _react2.default.createElement(_Box2.default, { id: id, label: event["info"]["name"], onclick: showModal }));
             var orderedMap = new Map([].concat(_toConsumableArray(boxMap.entries())).sort());
-            (0, _Util.log)('ordered keys: ' + Array.from(orderedMap.keys()));
             sequenceSteps = Array.from(orderedMap.values());
             sequenceSteps.push(getActionInsert()); // replace add action div
             setView(getUpdatedView(id));
             stepExists = true;
         }
-        (0, _Util.log)('exists? ' + stepExists);
         return stepExists;
     }
-
+    /**
+     * @description show modal to add first step, which will always be the sequence detail step
+     */
     function showSequenceDetailModal() {
         step++;
         document.getElementsByTagName("button")[0].remove();
         setView(getUpdatedView(step));
     }
+    /**
+     * @description handles addition of first new step, which will always be the sequence detail step
+     * @param {Object} event - bubbled by SequenceDetail on modal save
+     */
     function addSequenceDetailStep(event) {
         sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["info"]["name"], onclick: showModal, id: step }));
         sequenceSteps.push(getActionInsert());
         setView(getUpdatedView(step));
         step++;
     }
-    function addStep(event) {
-        var id = parseInt(event["info"]["id"]);
-        (0, _Util.log)('add step id : ' + id);
-        var actionInsert = sequenceSteps.pop();
-        sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector', id: id - .5 }));
-        sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["info"]["name"], onclick: showModal, id: step }));
-        sequenceSteps.push(actionInsert);
-        setView(getUpdatedView(step));
-        step++;
-    }
+    /**
+     * @description show modal to edit step when the corresponding div step is clicked
+     * @param {Object} event - bubbled by div step onclick
+     */
     function showModal(event) {
-        (0, _Util.log)('box click id ==> ' + event["info"]["id"]);
-        sequenceActionContent["info"]["id"] = event["info"]["id"];
+        var id = parseInt(event["info"]["id"]);
+        actionModalContent["info"]["id"] = id;
         document.getElementById("modal-container").className = "show";
-        var boxMap = new Map(sequenceSteps.map(function (x) {
-            return [x["props"]["id"], x];
-        }));
-        if (boxMap.has(event["info"]["id"]) && input) {
-            input.value = event["info"]["name"];
+        var boxMap = (0, _Util.getStepMap)(sequenceSteps);
+        if (boxMap.has(id) && id >= 4 && actionInput) {
+            actionInput.value = event["info"]["name"];
+        } else if (boxMap.has(id) && id < 4 && nonActionInput) {
+            modalContent["info"]["name"] = event["info"]["name"];
+            modalContent["info"]["id"] = event["info"]["id"];
+            nonActionInput.value = event["info"]["name"];
         }
-        setView(getUpdatedView(event["info"]["id"]));
+        setView(getUpdatedView(id));
     }
+    /**
+     * @description return add step element
+     */
     function getActionInsert() {
         return _react2.default.createElement(_AddAction2.default, { onaddaction: addAction, id: 1000 });
     }
+    /**
+     * @description reveal modal to let user add a new step
+     */
     function addAction() {
-        (0, _Util.log)('step ==> ' + step);
-        sequenceActionContent["info"]["name"] = '';
-        sequenceActionContent["info"]["id"] = step;
-        setUpdatedState();
+        switch (step) {
+            case 1:
+                modalContent["info"]["type"] = "Sequence Detail";
+                modalContent["info"]["id"] = step;
+                break;
+            case 2:
+                modalContent["info"]["type"] = "Entry Criteria";
+                modalContent["info"]["id"] = step;
+                break;
+            case 3:
+                modalContent["info"]["type"] = "Exit Criteria";
+                modalContent["info"]["id"] = step;
+                break;
+            default:
+                actionModalContent["info"]["name"] = '';
+                actionModalContent["info"]["id"] = step;
+        }
+        document.getElementById("modal-container").className = "show";
+        setView(getUpdatedView(step));
     }
     /**
-     * @description will need when user saves the sequence
+     * @description saves the sequence and actions (not being used yet)
      * @param {String} label 
      */
     function saveAction(label) {
@@ -7892,7 +7928,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-exports.default = SequenceActions;
+exports.default = SequenceAction;
 
 var _react = __webpack_require__(1);
 
@@ -7908,10 +7944,8 @@ __webpack_require__(21);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function SequenceActions(_ref) {
+function SequenceAction(_ref) {
     var viewMap = _ref.viewMap;
-
-    (0, _Util.log)('SequenceAction view map ==> ' + JSON.stringify(viewMap));
 
     var _useState = (0, _react.useState)([_react2.default.createElement(_ActionModal2.default, { viewMap: viewMap })]),
         _useState2 = _slicedToArray(_useState, 2),
@@ -7923,39 +7957,27 @@ function SequenceActions(_ref) {
         null,
         states
     );
-
-    // function getModal(){
-    //     // log('returning modal')    ;
-    //     if(states!=undefined && states){
-    //         this.refs.child.setName();
-    //     }
-    // }
-
-    // function bubble(event){
-    //     viewMap["saveaction"](event);
-    // }
-
-    // function selectActionType(e){
-    //     log('selected action type ==> '+e.target.textContent);
-    // }
-
-    // function handleMouseDown(){
-    //     click = true;
-    // }
-
-    // function handleMouseUp(){
-    //     click = false;
-    // }
-
-    //     function handleMouseOut(){
-    //     click = false;
-    // }
-
-    // function handleScroll(e){
-    //     if(click){
-    //         e.target.setAttribute('style','top:'+(e.clientY - 40)+'px; left:'+(e.clientX - 40)+'px;');
-    //     }
-    // }
+    /**
+     * will need when implementing draggable steps
+     * 
+     * function handleMouseDown(){
+            click = true;
+        }
+    
+        function handleMouseUp(){
+            click = false;
+        }
+    
+            function handleMouseOut(){
+            click = false;
+        }
+    
+        function handleScroll(e){
+            if(click){
+                e.target.setAttribute('style','top:'+(e.clientY - 40)+'px; left:'+(e.clientX - 40)+'px;');
+            }
+        }
+     */
 }
 
 /***/ }),
@@ -7982,7 +8004,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var ActionModal = function ActionModal(_ref) {
     var viewMap = _ref.viewMap;
 
-    (0, _Util.log)('ActionModal view map ==> ' + JSON.stringify(viewMap));
     function fetchActions(actionName) {
         (0, _Util.doApexAction)('ReactController.getActions', actionName, processFetchResults);
     }
@@ -8020,7 +8041,6 @@ var ActionModal = function ActionModal(_ref) {
         disperseActions();
     }
     function save() {
-        (0, _Util.log)('view map IN action modal ==> ' + viewMap["info"]["id"]);
         var input = document.getElementById('action_input');
         var saveaction = viewMap["saveaction"];
         saveaction({
@@ -8039,7 +8059,6 @@ var ActionModal = function ActionModal(_ref) {
 
     function getContent() {
         var inputValue = viewMap["info"]["name"] ? viewMap["info"]["name"] : 'fuggit';
-        (0, _Util.log)('inputValue ' + inputValue);
         if (viewMap == undefined || !viewMap) viewMap = { "info": { "name": "" } };
         return _react2.default.createElement(
             'div',
@@ -8800,13 +8819,9 @@ var doApexAction = function doApexAction(method, params, callback) {
 };
 
 var getStepMap = function getStepMap(sequenceSteps) {
-    if (sequenceSteps.length > 0) {
-        log('checking id of first entry in steps ==> ' + sequenceSteps[0]["props"]["id"]);
-    }
     var stepMap = new Map(sequenceSteps.map(function (x) {
         return [x["props"]["id"], x];
     }));
-    log('stepMap ==> ' + JSON.stringify(stepMap));
     return stepMap;
 };
 
@@ -8880,17 +8895,9 @@ var _Modal2 = _interopRequireDefault(_Modal);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function SequenceCriteria(_ref) {
-    var id = _ref.id,
-        type = _ref.type,
-        ondone = _ref.ondone;
+    var viewMap = _ref.viewMap;
 
-    return _react2.default.createElement(_Modal2.default, { type: type, saveaction: bubble });
-    function bubble(event) {
-        console.log('incoming event: ' + JSON.stringify(event));
-        console.log('bubbling id ==> ' + id);
-        event["info"]["id"] = id;
-        ondone(event);
-    }
+    return _react2.default.createElement(_Modal2.default, { viewMap: viewMap });
 }
 
 /***/ }),
@@ -8917,10 +8924,7 @@ var _Util = __webpack_require__(20);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Modal = function Modal(_ref) {
-    var type = _ref.type,
-        select = _ref.select,
-        oninputkeydown = _ref.oninputkeydown,
-        saveaction = _ref.saveaction;
+    var viewMap = _ref.viewMap;
 
     var _useState = (0, _react.useState)([getContent()]),
         _useState2 = _slicedToArray(_useState, 1),
@@ -8929,122 +8933,123 @@ var Modal = function Modal(_ref) {
         setModalBody = _useState2$[1];
 
     function getContent() {
-        if (type.toLowerCase().includes('detail')) return getSequenceDetailContent();
-        if (type.toLowerCase().includes('entry')) return getEntryCriteriaContent();
-        if (type.toLowerCase().includes('exit')) return getExitCriteriaContent();
+        if (viewMap["info"]["type"].toLowerCase().includes('detail')) return getSequenceDetailContent();
+        if (viewMap["info"]["type"].toLowerCase().includes('entry')) return getEntryCriteriaContent();
+        if (viewMap["info"]["type"].toLowerCase().includes('exit')) return getExitCriteriaContent();
     }
     function save(type) {
-        var name = document.getElementById('action_input').value;
-        saveaction({ "info": { "name": name, "type": type } });
+        var input = document.getElementById('action_input');
+        var name = input.value;
+        viewMap["saveaction"]({ "info": { "name": name, "type": viewMap["info"]["type"], "id": viewMap["info"]["id"], "element": input } });
     }
 
     function getSequenceDetailContent() {
         return _react2.default.createElement(
-            'div',
+            "div",
             null,
             _react2.default.createElement(
-                'p',
-                { className: 'type-header', style: {
+                "p",
+                { className: "type-header", style: {
                         marginTop: "-5px"
                     } },
-                'Sequence Detail'
+                "Sequence Detail"
             ),
             _react2.default.createElement(
-                'form',
+                "form",
                 null,
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Sequence Name',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
-                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
+                        "Sequence Name",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "text", name: "action", id: "action_input" }),
+                        _react2.default.createElement("div", { id: "action-results", selectedrecordid: "", className: "action-result-panel" })
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
-                    { className: 'types' },
+                    "div",
+                    { className: "types" },
                     _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: select },
-                        'IMG'
+                        "p",
+                        { className: "type", onClick: viewMap["onTypeSelect"] },
+                        "IMG"
                     ),
                     _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: select },
-                        'IMG'
+                        "p",
+                        { className: "type", onClick: viewMap["onTypeSelect"] },
+                        "IMG"
                     ),
                     _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: select },
-                        'IMG'
+                        "p",
+                        { className: "type", onClick: viewMap["onTypeSelect"] },
+                        "IMG"
                     ),
                     _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: select },
-                        'IMG'
+                        "p",
+                        { className: "type", onClick: viewMap["onTypeSelect"] },
+                        "IMG"
                     ),
                     _react2.default.createElement(
-                        'p',
-                        { className: 'type', onClick: select },
-                        'IMG'
+                        "p",
+                        { className: "type", onClick: viewMap["onTypeSelect"] },
+                        "IMG"
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Activation Type ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Automatic',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Manual',
-                        _react2.default.createElement('br', null)
+                        "Activation Type ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  Automatic",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  Manual",
+                        _react2.default.createElement("br", null)
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Priority ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  1',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  2',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  3',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  4',
-                        _react2.default.createElement('br', null)
+                        "Priority ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  1",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  2",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  3",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  4",
+                        _react2.default.createElement("br", null)
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     { style: { display: "flex", height: "40px", width: "70px" } },
                     _react2.default.createElement(
-                        'p',
+                        "p",
                         { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
-                        'Cancel'
+                        "Cancel"
                     ),
                     _react2.default.createElement(
-                        'p',
+                        "p",
                         { onClick: function onClick() {
-                                return save(type);
+                                return save(viewMap["info"]["type"]);
                             }, style: { fontSize: "10px", marginLeft: "5px" } },
-                        'Save'
+                        "Save"
                     )
                 )
             )
@@ -9053,71 +9058,71 @@ var Modal = function Modal(_ref) {
 
     function getEntryCriteriaContent() {
         return _react2.default.createElement(
-            'div',
+            "div",
             null,
             _react2.default.createElement(
-                'p',
-                { className: 'type-header', style: {
+                "p",
+                { className: "type-header", style: {
                         marginTop: "-5px"
                     } },
-                'Condition'
+                "Condition"
             ),
             _react2.default.createElement(
-                'form',
+                "form",
                 null,
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Select Field ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
-                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
+                        "Select Field ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "text", name: "action", id: "action_input" }),
+                        _react2.default.createElement("div", { id: "action-results", selectedrecordid: "", className: "action-result-panel" })
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Select Operator ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', name: 'time' })
+                        "Select Operator ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "text", name: "time" })
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Select Value ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  No Field Updates',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Field Updates Required',
-                        _react2.default.createElement('br', null)
+                        "Select Value ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  No Field Updates",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  Field Updates Required",
+                        _react2.default.createElement("br", null)
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     { style: { display: "flex", height: "40px", width: "70px" } },
                     _react2.default.createElement(
-                        'p',
+                        "p",
                         { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
-                        'Cancel'
+                        "Cancel"
                     ),
                     _react2.default.createElement(
-                        'p',
+                        "p",
                         { onClick: function onClick() {
-                                return save(type);
+                                return save(viewMap["info"]["type"]);
                             }, style: { fontSize: "10px", marginLeft: "5px" } },
-                        'Save'
+                        "Save"
                     )
                 )
             )
@@ -9125,71 +9130,71 @@ var Modal = function Modal(_ref) {
     }
     function getExitCriteriaContent() {
         return _react2.default.createElement(
-            'div',
+            "div",
             null,
             _react2.default.createElement(
-                'p',
-                { className: 'type-header', style: {
+                "p",
+                { className: "type-header", style: {
                         marginTop: "-5px"
                     } },
-                'Condition'
+                "Condition"
             ),
             _react2.default.createElement(
-                'form',
+                "form",
                 null,
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Select Field ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', onKeyUp: oninputkeydown, name: 'action', id: 'action_input' }),
-                        _react2.default.createElement('div', { id: 'action-results', selectedrecordid: '', className: 'action-result-panel' })
+                        "Select Field ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "text", name: "action", id: "action_input" }),
+                        _react2.default.createElement("div", { id: "action-results", selectedrecordid: "", className: "action-result-panel" })
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Select Operator ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'text', name: 'time' })
+                        "Select Operator ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "text", name: "time" })
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     null,
                     _react2.default.createElement(
-                        'label',
+                        "label",
                         null,
-                        'Select Value ',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  No Field Updates',
-                        _react2.default.createElement('br', null),
-                        _react2.default.createElement('input', { type: 'radio' }),
-                        '  Field Updates Required',
-                        _react2.default.createElement('br', null)
+                        "Select Value ",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  No Field Updates",
+                        _react2.default.createElement("br", null),
+                        _react2.default.createElement("input", { type: "radio" }),
+                        "  Field Updates Required",
+                        _react2.default.createElement("br", null)
                     )
                 ),
                 _react2.default.createElement(
-                    'div',
+                    "div",
                     { style: { display: "flex", height: "40px", width: "70px" } },
                     _react2.default.createElement(
-                        'p',
+                        "p",
                         { style: { color: "grey", marginLeft: "5px", fontSize: "10px" } },
-                        'Cancel'
+                        "Cancel"
                     ),
                     _react2.default.createElement(
-                        'p',
+                        "p",
                         { onClick: function onClick() {
-                                return save(type);
+                                return save(viewMap["info"]["type"]);
                             }, style: { fontSize: "10px", marginLeft: "5px" } },
-                        'Save'
+                        "Save"
                     )
                 )
             )
@@ -9197,16 +9202,16 @@ var Modal = function Modal(_ref) {
     }
 
     return _react2.default.createElement(
-        'div',
-        { className: 'outer-container' },
+        "div",
+        { className: "outer-container" },
         _react2.default.createElement(
-            'p',
+            "p",
             null,
-            type
+            viewMap["info"]["type"]
         ),
         _react2.default.createElement(
-            'div',
-            { className: 'action-types' },
+            "div",
+            { className: "action-types" },
             modalBody
         )
     );
@@ -9276,15 +9281,9 @@ var _Modal2 = _interopRequireDefault(_Modal);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function SequenceCriteria(_ref) {
-    var id = _ref.id,
-        type = _ref.type,
-        ondone = _ref.ondone;
+    var viewMap = _ref.viewMap;
 
-    return _react2.default.createElement(_Modal2.default, { type: type, saveaction: bubble });
-    function bubble(event) {
-        event["info"]["id"] = id;
-        ondone(event);
-    }
+    return _react2.default.createElement(_Modal2.default, { viewMap: viewMap });
 }
 
 /***/ }),
@@ -9310,15 +9309,9 @@ var _Modal2 = _interopRequireDefault(_Modal);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function SequenceDetail(_ref) {
-    var id = _ref.id,
-        ondone = _ref.ondone;
+    var viewMap = _ref.viewMap;
 
-    return _react2.default.createElement(_Modal2.default, { type: 'Sequence Detail', saveaction: bubble });
-    function bubble(event) {
-        console.log('bubble');
-        event["info"]["id"] = id;
-        ondone(event);
-    }
+    return _react2.default.createElement(_Modal2.default, { viewMap: viewMap });
 }
 
 /***/ }),

@@ -1,10 +1,6 @@
 import React from 'react';
 import Modal from '../Modal/Modal';
 
-export default function SequenceCriteria({id,type, ondone}){
-    return <Modal type={type} saveaction={bubble} />;
-    function bubble(event){
-        event["info"]["id"] = id;
-        ondone(event);
-    }
+export default function SequenceCriteria({viewMap}){
+    return <Modal viewMap={viewMap} />;
 }
