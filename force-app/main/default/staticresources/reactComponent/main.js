@@ -7799,7 +7799,7 @@ function App() {
         var id = parseInt(event["info"]["id"]);
         var actionInsert = sequenceSteps.pop();
         sequenceSteps.push(_react2.default.createElement('div', { className: 'line-connector', id: id - .5 }));
-        sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["info"]["name"], onclick: showModal, id: id }));
+        sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["info"]["name"], type: event["info"]["type"], onclick: showModal, id: id }));
         sequenceSteps.push(actionInsert);
         setView(getUpdatedView(id));
         step++;
@@ -7814,7 +7814,7 @@ function App() {
         var boxMap = (0, _Util.getStepMap)(sequenceSteps);
         if (boxMap.has(id)) {
             boxMap.delete(1000); // remove add action div
-            boxMap.set(id, _react2.default.createElement(_Box2.default, { id: id, label: event["info"]["name"], onclick: showModal }));
+            boxMap.set(id, _react2.default.createElement(_Box2.default, { id: id, label: event["info"]["name"], type: event["info"]["type"], onclick: showModal }));
             var orderedMap = new Map([].concat(_toConsumableArray(boxMap.entries())).sort());
             sequenceSteps = Array.from(orderedMap.values());
             sequenceSteps.push(getActionInsert()); // replace add action div
@@ -7836,7 +7836,7 @@ function App() {
      * @param {Object} event - bubbled by SequenceDetail on modal save
      */
     function addSequenceDetailStep(event) {
-        sequenceSteps.push(_react2.default.createElement(_Box2.default, { label: event["info"]["name"], onclick: showModal, id: step }));
+        sequenceSteps.push(_react2.default.createElement(_Box2.default, { type: event["info"]["type"], label: event["info"]["name"], onclick: showModal, id: step }));
         sequenceSteps.push(getActionInsert());
         setView(getUpdatedView(step));
         step++;
@@ -7854,6 +7854,7 @@ function App() {
             actionInput.value = event["info"]["name"];
         } else if (boxMap.has(id) && id < 4 && nonActionInput) {
             modalContent["info"]["name"] = event["info"]["name"];
+            modalContent["info"]["type"] = event["info"]["type"];
             modalContent["info"]["id"] = event["info"]["id"];
             nonActionInput.value = event["info"]["name"];
         }
@@ -9409,9 +9410,9 @@ var Box = function Box(_ref) {
     var label = _ref.label,
         handlemousedown = _ref.handlemousedown,
         onclick = _ref.onclick,
-        id = _ref.id;
+        id = _ref.id,
+        type = _ref.type;
 
-    (0, _Util.log)('box init w label ==> ' + label);
     return _react2.default.createElement(
         "div",
         { onMouseDown: handlemousedown,
@@ -9419,7 +9420,8 @@ var Box = function Box(_ref) {
             onClick: function onClick() {
                 return onclick({ "info": {
                         "id": id,
-                        "name": label
+                        "name": label,
+                        "type": type
                     } });
             }
             // onMouseUp={handleMouseUp}           will need

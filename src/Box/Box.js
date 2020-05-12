@@ -2,14 +2,14 @@ import React from "react";
 import './Box.css';
 import { log } from "../Util/Util";
 
-const Box = ({label, handlemousedown, onclick, id}) => {
-    log('box init w label ==> '+label);
+const Box = ({label, handlemousedown, onclick, id, type}) => {
     return (
         <div onMouseDown={handlemousedown} 
             className="dragger"
             onClick={() => onclick({"info":{
                 "id": id,
-                "name": label
+                "name": label, 
+                "type": type
             }})}
         // onMouseUp={handleMouseUp}           will need
         // onMouseOut={handleMouseOut}         these for 

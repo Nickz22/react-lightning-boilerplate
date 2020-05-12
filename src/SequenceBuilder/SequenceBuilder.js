@@ -86,7 +86,7 @@ export default function App(){
         let id = parseInt(event["info"]["id"]);
         let actionInsert = sequenceSteps.pop();
         sequenceSteps.push(<div className="line-connector" id={(id - .5)}></div>);
-        sequenceSteps.push(<Box label={event["info"]["name"]} onclick={showModal} id={id} />);
+        sequenceSteps.push(<Box label={event["info"]["name"]} type={event["info"]["type"]} onclick={showModal} id={id} />);
         sequenceSteps.push(actionInsert);
         setView(getUpdatedView(id));
         step++;
@@ -101,7 +101,7 @@ export default function App(){
         let boxMap = getStepMap(sequenceSteps);
         if( boxMap.has(id) ){
             boxMap.delete(1000); // remove add action div
-            boxMap.set(id, <Box id={id} label={event["info"]["name"]} onclick={showModal} />);
+            boxMap.set(id, <Box id={id} label={event["info"]["name"]} type={event["info"]["type"]} onclick={showModal} />);
             let orderedMap = new Map([...boxMap.entries()].sort());
             sequenceSteps = Array.from(orderedMap.values());
             sequenceSteps.push(getActionInsert()); // replace add action div
@@ -123,7 +123,7 @@ export default function App(){
      * @param {Object} event - bubbled by SequenceDetail on modal save
      */
     function addSequenceDetailStep(event){
-        sequenceSteps.push(<Box label={event["info"]["name"]} onclick={showModal} id={step} />);
+        sequenceSteps.push(<Box type={event["info"]["type"]} label={event["info"]["name"]} onclick={showModal} id={step} />);
         sequenceSteps.push(getActionInsert());
         setView(getUpdatedView(step));
         step++;
@@ -141,6 +141,7 @@ export default function App(){
             actionInput.value = event["info"]["name"];
         }else if(boxMap.has(id) && id<4 && nonActionInput){
             modalContent["info"]["name"] = event["info"]["name"];
+            modalContent["info"]["type"] = event["info"]["type"];
             modalContent["info"]["id"] = event["info"]["id"];
             nonActionInput.value = event["info"]["name"];
         }
