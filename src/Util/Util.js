@@ -2,7 +2,7 @@
 const doApexAction = (method, params, callback) => {
     Visualforce.remoting.Manager.invokeAction(
         method,
-        params,
+        // params,
         (results, event) => {
             if(event.status){
                 callback(results);
