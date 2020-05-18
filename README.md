@@ -14,7 +14,7 @@ This provides the basic structure needed for adding React Components to your Sal
 ## Quick Start
 
 1. Go through Setup
-1. Run `npm run deploy`
+1. Run `yarn deploy`
 1. Open your scratch org.
 1. Go to your developer console.
 1. Open Lightning Resource > ReactDevContainerApp
