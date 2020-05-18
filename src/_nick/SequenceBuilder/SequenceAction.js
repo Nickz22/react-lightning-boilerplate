@@ -17,7 +17,7 @@ export default function SequenceAction({viewMap}){
     );
 /**
  * will need when implementing draggable steps
- * 
+ *
  * function handleMouseDown(){
         click = true;
     }

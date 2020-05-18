@@ -68,3 +68,5 @@ build
 
 # ignore rdna ui repo
 ui
+
+.idea
