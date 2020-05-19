@@ -1,7 +1,7 @@
 # react-lightning-boilerplate
-Boilerplate repository for developing Lightning Components With React.
+Boilerplate repository for developing Visualforce pages With React.
 
-This provides the basic structure needed for adding React Components to your Salesforce Org via Webpack and SFDX.
+This provides the basic structure needed for adding React Components to your Salesforce Org via Webpack and SFDX. If you'd like to build & deploy on save (recommended), you can download the Run on Save VS Code Extension to do that.
 
 ## Setup
 
@@ -14,13 +14,12 @@ This provides the basic structure needed for adding React Components to your Sal
 ## Quick Start
 
 1. Go through Setup
+1. Set a default scratch org with sfdx force:config:set defaultusername=scratch_org_alias
 1. Run `yarn deploy`
 1. Open your scratch org.
 1. Go to your developer console.
 1. Open Lightning Resource > ReactDevContainerApp
 1. Click Preview and you should see something like this:
-
-![Screenshot of React Component within Lightning](https://github.com/jefflombard/react-lightning-boilerplate/blob/master/screenshot.png "Screenshot of React Component within Lightning")
 
 ## Available Commands
 
