@@ -1,5 +1,5 @@
 # react-lightning-boilerplate
-Boilerplate repository for developing Lightning Components With React.
+Boilerplate repository for developing Visualforce pages With React.
 
 This provides the basic structure needed for adding React Components to your Salesforce Org via Webpack and SFDX.
 
