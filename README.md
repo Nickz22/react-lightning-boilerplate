@@ -17,9 +17,7 @@ This provides the basic structure needed for adding React Components to your Sal
 1. Set a default scratch org with sfdx force:config:set defaultusername=scratch_org_alias
 1. Run `yarn deploy`
 1. Open your scratch org.
-1. Go to your developer console.
-1. Open Lightning Resource > ReactDevContainerApp
-1. Click Preview and you should see something like this:
+1. Go to your visualforce pages, find the ReactReduxBlog.page and click Preview.
 
 ## Available Commands
 
