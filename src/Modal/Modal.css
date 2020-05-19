@@ -1,0 +1,46 @@
+.outer-container{
+    position: fixed;
+    top: 10%; 
+    left:50%;
+    background-color: white; 
+    height: 350px; 
+    width: 275px;
+    border-radius: 2%;
+    box-shadow: 0 0 2.5px rgb(206, 206, 206);
+    padding: 15px;
+    overflow: scroll;
+}
+.action-types{
+    display: block;
+}
+.type-header{
+    font-family: logical;
+    font-style: normal;
+    font-size: 7px;
+}
+
+.types{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2px;
+    font-size: 9px;
+}
+
+.type{
+    font-family: logical;
+    margin-left: 30px;
+    display: flex;
+}
+
+p:hover{
+    cursor:pointer;
+    color: greenyellow;
+}
+
+.action-result-panel{
+    background-color: beige;
+    max-height: 200px;
+    overflow:scroll;
+    cursor:pointer;   
+}
+

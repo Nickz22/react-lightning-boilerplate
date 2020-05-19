@@ -1,0 +1,31 @@
+.outer-div{
+    width: 800px;
+    height: 500px;
+    background-color:  rgb(235, 235, 235);
+    display:block;
+    padding: 10% 10% ;
+    margin-left: 8%;
+}
+
+.line-connector{
+    height: 12px;
+    width: 1px;
+    background-color: rgb(170, 170, 170);
+    z-index: 10;
+    position: relative;
+    left: 100px;
+}
+
+.hide{
+    display: hidden;
+}
+.show{
+    display: block;
+}
+
+.dummy{
+    background-color: orange;
+}
+.smarty{
+    background-color: orchid;
+}

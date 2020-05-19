@@ -1,0 +1,13 @@
+.dragger{
+    width: 200px;
+    height: 50px;
+    background-color: rgb(253, 253, 253);
+    cursor: pointer;
+    border-radius: 3%;
+}
+
+.action-label{
+    padding: 15px 15px;
+    font-size: small;
+    font-family: Logical;
+}

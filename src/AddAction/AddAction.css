@@ -1,0 +1,13 @@
+.new-action-connector{
+    height: 12px;
+    width: 1px;
+    background-color: rgb(170, 170, 170);
+    position: relative;
+    top: 0;
+    left: 100px;
+}
+
+.add-action{
+    padding: 0 89px;
+    cursor:pointer;
+}

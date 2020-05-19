@@ -1,0 +1,12 @@
+<apex:page controller="ReactController" showHeader="false" standardStylesheets="false"  applyBodyTag="false" applyHtmlTag="false">
+<html>
+<head>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+</head>
+    <body>
+        <!-- reactjs -->
+        <div id="body" />    
+        <apex:includeScript loadOnReady="true" value="{!$Resource.reactComponent + '/main.js'}"/>
+    </body>
+</html>
+</apex:page>
