@@ -10,32 +10,18 @@ This provides the basic structure needed for adding React Components to your Sal
 1. [Install sfdx cli](https://developer.salesforce.com/tools/sfdxcli)
 1. [Install Node](https://nodejs.org/en/)
 1. `cd` into the project directory and run `yarn` or `npm install`
+1. I would recommend installing [Run on Save](https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save) so the app will build and deploy on every save. 
 
 ## Quick Start
 
 1. Go through Setup
+1. Set a default sfdx username with `sfdx force:config:set defaultusername=yourscratchorgalias`
 1. Run `npm run deploy`
 1. Open your scratch org.
-1. Go to your developer console.
-1. Open Lightning Resource > ReactDevContainerApp
-1. Click Preview and you should see something like this:
-
-![Screenshot of React Component within Lightning](https://github.com/jefflombard/react-lightning-boilerplate/blob/master/screenshot.png "Screenshot of React Component within Lightning")
+1. Go to your visualforce pages.
+1. Open ReactPoc
+1. Click Preview to see the poc
 
 ## Available Commands
 
-prefix with `yarn` or `npm run`.
-example: `yarn build`
-
-- `build` - runs webpack to bundle your React src.
-- `deploy` - runs `build` and then pushes to your default scratch org
-
-## Acknowledgements
-
-This project was influenced by this post: [Lightning Container Component: Building Components with React, Angular, and Other Libraries](https://developer.salesforce.com/blogs/2018/04/lightning-container-component-building-components-with-react-angular-and-other-libraries.html).
-
-### Eigen X
-This project is developed and maintained by [@EigenX](https://twitter.com/eigenx). Have questions or need help with setup? [Email Us](mailto:info@eigenx.com)
-
-## License
-See `LICENSE`
+`npm run deploy`
