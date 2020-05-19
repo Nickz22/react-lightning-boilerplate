@@ -9,7 +9,7 @@ This provides the basic structure needed for adding React Components to your Sal
 1. `clone` your forked repo with `git clone <yourRepoUrl>`
 1. [Install sfdx cli](https://developer.salesforce.com/tools/sfdxcli)
 1. [Install Node](https://nodejs.org/en/)
-1. `cd` into the project directory and run `yarn` or `npm install`
+1. `cd` into the project directory and run `npm install`
 1. I would recommend installing [Run on Save](https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save) so the app will build and deploy on every save. 
 
 ## Quick Start
